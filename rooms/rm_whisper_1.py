@@ -29,6 +29,7 @@ def handle_input(cmd, game_state, room_module=None):
 
     cmd = cmd.lower().strip()
 
+    # Main path commands
     if cmd == "scan fog":
         if game_state.get_flag("whisper_scanned"):
             return None, [">> Fog already scanned. Port silhouette confirmed."]
@@ -73,7 +74,85 @@ def handle_input(cmd, game_state, room_module=None):
         game_state.set_flag("whisper_port_connected", True)
         return transition_to_room("whisper_2", [">> Port connected. You slip deeper into the whisper stream..."])
 
-    return None, [">> Unknown command. Try 'scan fog', 'ping port', 'decrypt handshake', or 'connect port'."]
+    # Optional path: sniff / trace / spoof / inject / connect alt
+    if cmd == "sniff stream":
+        if not game_state.get_flag("whisper_scanned"):
+            return None, [">> Stream too chaotic. 'scan fog' required first."]
+        if game_state.get_flag("whisper_sniffed"):
+            return None, [">> Already sniffed. Data echoes in silence..."]
+        game_state.set_flag("whisper_sniffed", True)
+        return None, [
+            ">> Listening to data stream...",
+            "   - Intercepted: 'WHSPR-ALT-GATE:{locked}'",
+            "   - Fragment: '[F0]GR1D_N0D3~tr4c3_nul1'",
+            ">> Try 'trace signal'?"
+        ]
+
+    if cmd == "trace signal":
+        if not game_state.get_flag("whisper_sniffed"):
+            return None, [">> No traceable packet. Use 'sniff stream' first."]
+        if game_state.get_flag("whisper_traced"):
+            return None, [">> Already traced. Ghost path remains dim."]
+        game_state.set_flag("whisper_traced", True)
+        return None, [
+            ">> Signal trace initiated...",
+            "   - Route: deprecated proxy loop",
+            "   - Obfuscation: High",
+            "   - Detected: Secondary port ghosted in subnet tail.",
+            ">> Try 'spoof source' to impersonate probe origin."
+        ]
+
+    if cmd == "spoof source":
+        if not game_state.get_flag("whisper_traced"):
+            return None, [">> No valid target for spoofing."]
+        if game_state.get_flag("whisper_spoofed"):
+            return None, [">> Source identity already masked."]
+        game_state.set_flag("whisper_spoofed", True)
+        return None, [
+            ">> Source spoofed as: system_routine[1729]",
+            "   - Port AI confused.",
+            "   - Access channel destabilizing...",
+            ">> Try 'inject packet' before it collapses."
+        ]
+
+    if cmd == "inject packet":
+        if not game_state.get_flag("whisper_spoofed"):
+            return None, [">> Injection path invalid. Spoof first."]
+        if game_state.get_flag("whisper_injected"):
+            return None, [">> Packet already injected. System buffering..."]
+        game_state.set_flag("whisper_injected", True)
+        return None, [
+            ">> Packet injection successful.",
+            "   - Buffer overflow induced",
+            "   - Alternate gate 'W-ALT-2' opened",
+            ">> Optional route unlocked. Use 'connect alt' to diverge."
+        ]
+
+    if cmd == "connect alt":
+        if not game_state.get_flag("whisper_injected"):
+            return None, [">> Alternate port unavailable. Injection required."]
+        return transition_to_room("whisper_2_alt", [">> You reroute through the shadow gate..."])
+
+    # Alternate exploit path: sniff / compile / connect mimic
+    if cmd == "compile exploit":
+        if not game_state.get_flag("whisper_sniffed"):
+            return None, [">> No exploit vector discovered."]
+        if game_state.get_flag("whisper_exploit_ready"):
+            return None, [">> Exploit already compiled."]
+        game_state.set_flag("whisper_exploit_ready", True)
+        return None, [
+            ">> Assembling zero-day...",
+            "   - Using legacy packet fragment and trace residue.",
+            "   - Exploit compiled: PORT_MIMIC_17X ready",
+            ">> You can now 'connect mimic' to trick the system."
+        ]
+
+    if cmd == "connect mimic":
+        if not game_state.get_flag("whisper_exploit_ready"):
+            return None, [">> Exploit not prepared. Compile first."]
+        return transition_to_room("whisper_2_mimic", [">> System spoofed. Mimic connection stabilized..."])
+
+    return None, [">> Unknown command. Try 'help' for available options."]
 
 
 def get_available_commands():
@@ -81,5 +160,12 @@ def get_available_commands():
         "scan fog            - analyze data fog for hidden I/O ports",
         "ping port           - probe the visible port for response",
         "decrypt handshake   - decode port challenge to enable access",
-        "connect port        - interface with the port once decrypted"
+        "connect port        - interface with the port once decrypted",
+        "sniff stream        - intercept ambient data transmissions",
+        "trace signal        - follow packet ghost routes to hidden paths",
+        "spoof source        - impersonate origin node",
+        "inject packet       - overload input buffer with custom payload",
+        "compile exploit     - build an alternate port bypass using packet traces",
+        "connect alt         - access alternate gate (if unlocked)",
+        "connect mimic       - spoof entry using compiled exploit"
     ]

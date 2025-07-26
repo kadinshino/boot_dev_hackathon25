@@ -103,6 +103,13 @@ class GameState:
         """Remove all items from inventory."""
         self.inventory.clear()
 
+    def set(self, key: str, value: Any) -> None:
+        self.game_flags[key] = value
+
+    def get(self, key: str, default=None) -> Any:
+        return self.game_flags.get(key, default)
+
+
     # Game flags management
     def set_flag(self, flag: str, value: Any = True) -> None:
         """Set a game flag to a specific value."""
