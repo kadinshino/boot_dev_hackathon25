@@ -206,15 +206,7 @@ For detailed development documentation, see:
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-### Areas for Contribution
-
-- New rooms and puzzles
-- Bug fixes and optimizations
-- Documentation improvements
-- Visual effects and themes
-- Additional game paths
+Comming Soon - "likely on itch.io or here once i learn more"
 
 ## 📄 License
 
@@ -222,7 +214,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Credits
 
-**Created by**: KadinGamingLounge
+**Created by**: Kadin - KadinsGamingLounge - 
 **Website**: [kadinsgaminglounge.itch.io](https://kadinsgaminglounge.itch.io/)  
 **Repository**: [github.com/kadinshino/boot_dev_hackathon25](https://github.com/kadinshino/boot_dev_hackathon25)
 
