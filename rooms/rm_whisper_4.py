@@ -112,7 +112,7 @@ from resources.room_utils import format_enter_lines, standard_commands, transiti
 WHISPER_GRID = {
 
     "192.168.1.1": {
-        "connections": ["192.168.1.2", "192.168.2.1"],
+        "connections": ["192.168.1.2", "192.168.2.1","10.0.0.1"],
         "safe": True,
         "description": "Entry point - Home router"
     },
@@ -122,7 +122,7 @@ WHISPER_GRID = {
         "description": "Local subnet - IoT devices"
     },
     "192.168.1.3": {
-        "connections": ["192.168.1.2", "192.168.3.1","10.0.0.1"],
+        "connections": ["192.168.1.2", "192.168.3.1"],
         "safe": False,
         "description": "Honeypot server - MONITORED",
         "detection_increase": 25
@@ -282,7 +282,7 @@ def handle_input(cmd, game_state, room_module=None):
             return None, [">> No exit node at this location."]
         if get_detection(game_state) >= 80:
             return None, [">> Detection too high to exit safely."]
-        return transition_to_room("loop_chamber", [
+        return transition_to_room("whisper_5", [
             f">> Exit successful. Final detection: {get_detection(game_state)}%",
             ">> Whisper grid traversal complete. Initiating phase shift..."
         ])

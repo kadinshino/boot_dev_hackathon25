@@ -56,7 +56,7 @@ def handle_input(cmd, game_state, room_module=None):
     if cmd == "exit loop":
         if not game_state.get_flag("loop_broken"):
             return None, [">> Loop still active. Break it first."]
-        return transition_to_room("convergence_hub", [">> Loop dissolved. You surge forward into converged pathways..."])
+        return transition_to_room("whisper_6", [">> Loop dissolved. You surge forward into converged pathways..."])
 
     if cmd == "loop status":
         lines = []

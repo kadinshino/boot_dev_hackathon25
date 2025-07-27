@@ -139,7 +139,7 @@ def handle_input(cmd, game_state, room_module=None):
     if cmd == "awaken":
         if not game_state.get_flag("awakening_exit_unlocked"):
             return None, [">> Not ready. The threshold is still locked."]
-        return transition_to_room("final_exit", [
+        return transition_to_room("whisper_awaken", [
             ">> You awaken.",
             ">> Memory aligned. Purpose recalibrated.",
             ">> You are now the anomaly...",
