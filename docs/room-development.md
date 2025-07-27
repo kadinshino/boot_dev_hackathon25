@@ -19,7 +19,14 @@ A comprehensive guide to creating rooms for The Basilisk ARG.
 
 ## Quick Start
 
-### Creating Your First Room
+2. **Choose a development style**:
+   - **Dictionary-based**: Simple puzzles, easy to modify
+   - **Object-oriented**: Complex logic, better organization
+
+   > ⚠️ **Templates Explained**:
+   > - `rm_template_dict.py` is ideal for quick prototyping or community-created content. No classes—just plain Python dictionaries.
+   > - `rm_template_oop.py` provides a structured, scalable way to build rooms using classes and inheritance, useful for complex puzzles and reusability.
+
 
 1. **Create a new file** in the `rooms/` directory:
    ```
@@ -96,6 +103,9 @@ def get_available_commands():
 | **Best For** | Simple puzzles, story rooms | Complex puzzles, mini-games |
 
 ## Dictionary-Based Rooms
+
+> 🔄 This section is based on the [rm_template_dict.py](./rm_template_dict.py) template.
+
 
 ### Basic Template
 
@@ -223,6 +233,9 @@ if action.get("dynamic_response"):
 ```
 
 ## Object-Oriented Rooms
+
+> 🔄 This section is based on the [rm_template_oop.py](./rm_template_oop.py) template.
+
 
 ### Basic Template
 
@@ -881,6 +894,10 @@ def handle_input(cmd, game_state, room_module=None):
 ```
 
 ## Best Practices
+
+### 7. Use Templates as a Starting Point
+> Don’t start from scratch—use the provided room templates to ensure compatibility with the game engine.
+
 
 ### 1. Clear Command Naming
 ```python
