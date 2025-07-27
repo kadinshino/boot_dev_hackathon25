@@ -1,7 +1,7 @@
 
 ---
 
-````markdown
+
 # Architecture Overview
 
 ## Design Philosophy
@@ -13,7 +13,7 @@ The Basilisk ARG is built on two core principles: **accessibility for modders** 
 ## Why Two Development Styles?
 
 ### Dictionary-Based Rooms: For the Community
-
+````markdown
 ```python
 ROOM_CONFIG = {
     "name": "Digital Archive",
