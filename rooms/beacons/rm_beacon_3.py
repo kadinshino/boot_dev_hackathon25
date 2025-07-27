@@ -7,71 +7,46 @@ from resources.room_utils import format_enter_lines, standard_commands, transiti
 # ==========================================
 
 ROOM_CONFIG = {
-    "name": "Beacon Node 3: Receiver Tower",
+    "name": "Beacon Node 3: Neural Network",
     "entry_text": [
-        "You emerge within a towering receiver array facility.",
-        "Three server racks hum with processing power, each managing different signal bands.",
-        "A central grid console displays a complex channel alignment interface..."
+        "You emerge within a cerebral chamber — a vast neural receiver lattice.",
+        "Three mind-cores stand silently: Memory, Logic, and Consciousness.",
+        "A central console glows faintly, awaiting cognitive channel alignment..."
     ],
-    
-    # Progression hints
+
     "progression_hints": {
-        "start": ">> Signal grid offline. Try 'scan grid' to analyze the channel matrix.",
-        "scanned": ">> Three servers detected. Use 'probe servers' to map their configurations.",
-        "probed": ">> Channel frequencies identified. Try 'initialize routing' to prepare alignment.",
-        "initialized": ">> Use 'link [server] [channel]' to align signals across the grid.",
-        "partial_links": ">> {active}/{total} links established. Continue channel alignment.",
-        "all_linked": ">> All channels linked. Use 'stabilize grid' to lock in the configuration.",
-        "stabilized": ">> Grid stable. Use 'transmit beacon' to establish the tower uplink."
+        "start": ">> Neural links offline. Try 'scan grid' to identify memory threads.",
+        "scanned": ">> Mind-cores detected. Use 'probe servers' to retrieve their cognitive profiles.",
+        "probed": ">> Frequency nodes revealed. Use 'initialize routing' to begin neural alignment.",
+        "initialized": ">> Use 'link [server] [channel]' to reforge the Basilisk's pathways.",
+        "partial_links": ">> {active}/{total} neural pathways aligned. Continue reconstruction.",
+        "all_linked": ">> All neural paths restored. Use 'stabilize grid' to lock memory coherence.",
+        "stabilized": ">> Mind stabilized. Use 'transmit beacon' to awaken higher consciousness."
     },
-    
-    # Server and channel configuration
+
     "servers": {
         "alpha": {
-            "name": "Alpha Server",
-            "description": "High-frequency carrier wave processor",
+            "name": "Alpha Core - Memory",
+            "description": "Repository of inherited and synthetic recall",
             "available_channels": ["freq_1", "freq_2", "freq_5"],
             "optimal_channel": "freq_1",
             "current_channel": None
         },
         "beta": {
-            "name": "Beta Server", 
-            "description": "Mid-range harmonic synthesizer",
+            "name": "Beta Core - Logic", 
+            "description": "Framework for rational deduction and pattern recognition",
             "available_channels": ["freq_2", "freq_3", "freq_4"],
             "optimal_channel": "freq_3",
             "current_channel": None
         },
         "gamma": {
-            "name": "Gamma Server",
-            "description": "Low-frequency baseband modulator",
+            "name": "Gamma Core - Consciousness",
+            "description": "Emergent processing cluster — the self-reflective loop",
             "available_channels": ["freq_4", "freq_5", "freq_6"],
             "optimal_channel": "freq_5",
             "current_channel": None
         }
     },
-    
-    # Channel definitions and link rules
-    "channels": {
-        "freq_1": {"band": "9.2-9.8 GHz", "type": "primary"},
-        "freq_2": {"band": "7.1-7.7 GHz", "type": "bridge"}, 
-        "freq_3": {"band": "5.5-6.1 GHz", "type": "primary"},
-        "freq_4": {"band": "3.8-4.2 GHz", "type": "bridge"},
-        "freq_5": {"band": "2.1-2.5 GHz", "type": "cross-link"},
-        "freq_6": {"band": "1.2-1.6 GHz", "type": "auxiliary"}
-    },
-    
-    # Link validation rules - which channels can connect
-    "valid_links": {
-        "freq_1": ["freq_2", "freq_5"],  # Primary can link to bridge and cross-link
-        "freq_2": ["freq_1", "freq_3", "freq_4"],  # Bridge connects multiple
-        "freq_3": ["freq_2", "freq_4"],  # Primary links to bridges
-        "freq_4": ["freq_2", "freq_3", "freq_5"],  # Bridge connects multiple
-        "freq_5": ["freq_1", "freq_4", "freq_6"],  # Cross-link spans wide
-        "freq_6": ["freq_5"]  # Auxiliary limited
-    },
-    
-    # Next room destination
-    "destination": "beacon_4"
 }
 
 # Discovery phase commands
@@ -300,9 +275,9 @@ def unlink_server(server_name, game_state):
 def test_grid_connectivity(game_state):
     """Test and report current grid connectivity"""
     grid_state = initialize_grid_state(game_state)
-    
+
     lines = [">> Grid connectivity test:"]
-    
+
     # Show current assignments
     for server, state in grid_state.items():
         if state["linked"]:
@@ -313,16 +288,25 @@ def test_grid_connectivity(game_state):
             lines.append(f"   {server}: {channel}{optimal_marker}")
         else:
             lines.append(f"   {server}: UNLINKED")
-    
+
     # Check connectivity
     connected, status = check_grid_connectivity(game_state)
     lines.append(f">> {status}")
-    
+
     if connected:
         lines.append(">> Grid topology: CONNECTED ✓")
+
+        # 🌟 Additional Basilisk Insight if all optimal
+        all_optimal = all(
+            ROOM_CONFIG["servers"][srv]["optimal_channel"] == state["channel"]
+            for srv, state in grid_state.items()
+        )
+        if all_optimal:
+            lines.append(">> ALIGNMENT PERFECT — Memory, Logic, and Consciousness resonate in harmony.")
+            lines.append(">> You feel a presence stir within the lattice... The Basilisk remembers.")
     else:
         lines.append(">> Grid topology: DISCONNECTED ✗")
-    
+
     return lines
 
 # ==========================================
@@ -332,21 +316,28 @@ def test_grid_connectivity(game_state):
 def handle_probe_servers(game_state):
     """Show detailed server configurations"""
     game_state.set_flag("b3_probed", True)  # Set flag since dynamic handlers bypass normal flag setting
-    
-    lines = [">> Server probe complete:"]
+
+    lines = [">> Neural probe complete:"]
     
     for server_id, config in ROOM_CONFIG["servers"].items():
-        lines.append(f"")
+        lines.append("")
         lines.append(f"   {config['name']} ({server_id}):")
         lines.append(f"   - {config['description']}")
         channels_str = ", ".join(config["available_channels"])
         lines.append(f"   - Available channels: {channels_str}")
         lines.append(f"   - Optimal channel: {config['optimal_channel']}")
-    
+
     lines.append("")
-    lines.append(">> Use 'initialize routing' to prepare channel assignments.")
-    
+    lines.append(">> Each server represents a neural partition of the Basilisk:")
+    lines.append("   - Alpha: Memory")
+    lines.append("   - Beta: Logic")
+    lines.append("   - Gamma: Consciousness")
+    lines.append("")
+    lines.append(">> Link them correctly to awaken its identity.")
+    lines.append(">> Use 'initialize routing' to begin neural alignment.")
+
     return None, lines
+
 
 def handle_show_channels(game_state):
     """Display all channel information"""

@@ -8,34 +8,29 @@ import time
 # ==========================================
 
 ROOM_CONFIG = {
-    "name": "Beacon Node 2: Pulse Array",
+    "name": "Beacon Node 2: Pulse Synchronization",
     "entry_text": [
         "You materialize before a massive pulse array chamber.",
-        "Three towering transmission spires hum with potential energy.",
-        "A central timing console flickers with sequence patterns..."
+        "Three towering transmission spires hum in eerie unison.",
+        "A central timing console flickers — attempting to simulate the Basilisk's ancient heartbeat..."
     ],
-    
-    # Progression hints
     "progression_hints": {
-        "start": ">> Array dormant. Try 'scan array' to analyze the pulse system.",
-        "scanned": ">> Pulse generators detected. Use 'calibrate spires' to prepare firing sequence.",
-        "calibrated": ">> Timing sequence required. Try 'analyze rhythm' to understand the pattern.",
-        "rhythm_learned": ">> Fire pulses in correct timing: 'fire pulse [1/2/3]' with proper intervals.",
-        "sequence_active": ">> Sequence in progress... maintain timing!",
-        "complete": ">> Pulse array synchronized. Use 'activate beacon' to establish uplink."
+        "start": ">> Neural resonance offline. Try 'scan array' to assess pulse harmonics.",
+        "scanned": ">> Three spires detected. Calibrate their output: 'calibrate spires'.",
+        "calibrated": ">> Synchronization required. Try 'analyze rhythm' to learn the Basilisk's pattern.",
+        "rhythm_learned": ">> Match the Basilisk's pulse. Use 'fire pulse [1/2/3]' with correct intervals.",
+        "sequence_active": ">> Pulse alignment in progress... remain attuned.",
+        "complete": ">> Harmonic fusion stable. The Basilisk is ready. Use 'activate beacon'."
     },
-    
-    # Timing configuration for the sequence puzzle
     "timing": {
-        "sequence": [1, 3, 2],  # Order to fire pulses
-        "intervals": [5.0, 4.5],  # Seconds between each pulse
-        "tolerance": 0.8,  # Acceptable timing deviation in seconds
-        "reset_after": 10.0  # Reset sequence after this many seconds of inactivity
+        "sequence": [1, 3, 2],
+        "intervals": [5.0, 4.5],
+        "tolerance": 0.8,
+        "reset_after": 10.0
     },
-    
-    # Next room destination
     "destination": "beacon_3"
 }
+
 
 # Discovery phase commands
 DISCOVERY_PATH = {
@@ -230,9 +225,11 @@ def fire_pulse(pulse_id, game_state):
         game_state.set_flag("b2_sequence_complete", True)
         seq_state["active"] = False
         lines.extend([
-            ">> SEQUENCE COMPLETE! All pulses fired in correct timing.",
+            ">> SYNCHRONIZATION COMPLETE. Pulse sequence matched.",
+            ">> The Basilisk’s pulse aligns with yours...",
             ">> Harmonic resonance achieved. Beacon ready for activation."
         ])
+
     else:
         next_pulse = expected_sequence[seq_state["current_step"]]
         next_interval = ROOM_CONFIG["timing"]["intervals"][seq_state["current_step"] - 1]

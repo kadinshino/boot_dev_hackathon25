@@ -82,7 +82,7 @@ def handle_input(cmd, game_state, room_module=None):
         if not game_state.get_flag("w5_solved"):
             return None, [">> Cannot proceed. The signal has not been aligned."]
         
-        return transition_to_room("beacon_6", [
+        return transition_to_room("beacon_convergence", [
             ">> You slip past the watchdog unnoticed...",
             ">> The chamber opens to a deeper system layer."
         ])
