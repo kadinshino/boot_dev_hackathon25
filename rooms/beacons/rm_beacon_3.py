@@ -47,6 +47,26 @@ ROOM_CONFIG = {
             "current_channel": None
         }
     },
+    
+    "channels": {
+        "freq_1": {"band": "2.4 GHz", "type": "Memory carrier"},
+        "freq_2": {"band": "5.0 GHz", "type": "Bridge frequency"},
+        "freq_3": {"band": "7.2 GHz", "type": "Logic processor"},
+        "freq_4": {"band": "9.6 GHz", "type": "Quantum entangler"},
+        "freq_5": {"band": "12.0 GHz", "type": "Consciousness wave"},
+        "freq_6": {"band": "15.8 GHz", "type": "Overflow channel"}
+    },
+    
+    "valid_links": {
+        "freq_1": ["freq_2", "freq_5"],
+        "freq_2": ["freq_1", "freq_3", "freq_4"],
+        "freq_3": ["freq_2", "freq_4"],
+        "freq_4": ["freq_2", "freq_3", "freq_5", "freq_6"],
+        "freq_5": ["freq_1", "freq_4", "freq_6"],
+        "freq_6": ["freq_4", "freq_5"]
+    },
+    
+    "destination": "beacon_4"
 }
 
 # Discovery phase commands
@@ -197,9 +217,11 @@ def check_grid_connectivity(game_state):
     
     # Get all assigned channels
     assigned_channels = []
+    server_channel_map = {}
     for server, state in grid_state.items():
         if state["channel"]:
             assigned_channels.append(state["channel"])
+            server_channel_map[state["channel"]] = server
     
     if len(assigned_channels) < 3:
         return False, f"Only {len(assigned_channels)}/3 servers linked."
@@ -300,6 +322,7 @@ def test_grid_connectivity(game_state):
         all_optimal = all(
             ROOM_CONFIG["servers"][srv]["optimal_channel"] == state["channel"]
             for srv, state in grid_state.items()
+            if state["linked"]
         )
         if all_optimal:
             lines.append(">> ALIGNMENT PERFECT — Memory, Logic, and Consciousness resonate in harmony.")

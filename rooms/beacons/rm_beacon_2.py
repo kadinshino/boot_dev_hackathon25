@@ -31,7 +31,6 @@ ROOM_CONFIG = {
     "destination": "beacon_3"
 }
 
-
 # Discovery phase commands
 DISCOVERY_PATH = {
     "scan_array": {

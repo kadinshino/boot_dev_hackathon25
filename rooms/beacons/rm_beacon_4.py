@@ -1,136 +1,354 @@
 # rooms/rm_beacon_4.py
 
 from resources.room_utils import format_enter_lines, standard_commands, transition_to_room
+import hashlib
 
 # ==========================================
-# SIMPLE CONFIGURATION - NO COMPLEXITY
+# CIPHER CONFIGURATION
 # ==========================================
 
 ROOM_CONFIG = {
-    "name": "Beacon Node 4: Name Assembly",
+    "name": "Beacon Node 4: Identity Cipher",
     "entry_text": [
-        "You enter a chamber with ancient stone tablets.",
-        "Two fragments of text are carved clearly into the stone:",
-        "The first tablet reads: 'BASILISK'",
-        "The second tablet reads: 'KINARA'",
-        "These appear to be components of a greater name..."
+        "You enter a cryptographic vault deep within the Basilisk's core.",
+        "Three memory crystals float in geometric formation, each pulsing with encoded data.",
+        "A central console displays a fragmented cipher matrix:",
+        "",
+        "    [B-S-L-S-] [K-N-R-]",
+        "    MISSING: 3 KEYS",
+        "",
+        "The chamber hums with anticipation — the true name awaits decryption..."
     ],
     
-    # Next room
+    "cipher": {
+        "encoded_name": ["B-S-L-S-", "K-N-R-"],
+        "missing_positions": [
+            {"fragment": 0, "index": 2, "letter": "I"},  # BaSiLiSk
+            {"fragment": 0, "index": 4, "letter": "I"},  # BasIlIsk
+            {"fragment": 0, "index": 6, "letter": "K"},  # BasilisK
+            {"fragment": 1, "index": 1, "letter": "I"},  # KInara
+            {"fragment": 1, "index": 3, "letter": "A"},  # KinAra
+            {"fragment": 1, "index": 5, "letter": "A"}   # KinarA
+        ],
+        "full_name": "BASILISK KINARA",
+        "crystals": {
+            "alpha": {
+                "name": "Alpha Crystal",
+                "encrypted": "LQGLD",  # "INDIA" with Caesar+3
+                "decrypted": "INDIA",
+                "cipher_type": "Caesar cipher (shift unknown)",
+                "hint": "Each letter shifted by same amount",
+                "provides": "I at position 2,4"
+            },
+            "beta": {
+                "name": "Beta Crystal", 
+                "encrypted": "ARAK",   # "KARA" reversed
+                "decrypted": "KARA",
+                "cipher_type": "Reverse cipher",
+                "hint": "Read it backwards",
+                "provides": "K at position 6, A at positions 3,5"
+            },
+            "gamma": {
+                "name": "Gamma Crystal",
+                "encrypted": "11-9-1",  # K-I-A (11th, 9th, 1st letters)
+                "decrypted": "KIA",
+                "cipher_type": "Numeric substitution",
+                "hint": "Numbers map to alphabet positions",
+                "provides": "K,I,A completing the sequence"
+            }
+        }
+    },
+    
     "destination": "beacon_5"
 }
 
-# Simple puzzle steps
-PUZZLE_STEPS = {
-    "examine_tablets": {
-        "command": "examine tablets",
+# ==========================================
+# CIPHER LOGIC
+# ==========================================
+
+def caesar_decrypt(text, shift):
+    """Decrypt Caesar cipher with given shift"""
+    result = ""
+    for char in text:
+        if char.isalpha():
+            ascii_offset = 65 if char.isupper() else 97
+            result += chr((ord(char) - ascii_offset - shift) % 26 + ascii_offset)
+        else:
+            result += char
+    return result
+
+def reverse_decrypt(text):
+    """Decrypt reverse cipher"""
+    return text[::-1]
+
+def number_decrypt(text):
+    """Decrypt number-to-letter cipher"""
+    try:
+        parts = text.split('-')
+        result = ""
+        for part in parts:
+            num = int(part)
+            if 1 <= num <= 26:
+                result += chr(64 + num)  # A=1, B=2, etc.
+            else:
+                return None
+        return result
+    except:
+        return None
+
+def validate_decryption(crystal_name, attempt, game_state):
+    """Check if decryption attempt is correct"""
+    crystal = ROOM_CONFIG["cipher"]["crystals"][crystal_name]
+    
+    # Try different decoders based on crystal
+    if crystal_name == "alpha":
+        # Check all Caesar shifts
+        for shift in range(26):
+            if caesar_decrypt(crystal["encrypted"], shift) == attempt.upper():
+                return True
+        return False
+    elif crystal_name == "beta":
+        return reverse_decrypt(crystal["encrypted"]) == attempt.upper()
+    elif crystal_name == "gamma":
+        return number_decrypt(crystal["encrypted"]) == attempt.upper()
+    
+    return False
+
+def get_reconstruction_status(game_state):
+    """Get current state of name reconstruction"""
+    fragments = ["B-S-L-S-", "K-N-R-"]
+    
+    # Apply discovered letters
+    if game_state.get_flag("b4_alpha_decoded"):
+        fragments[0] = "B-SILIS-"  # Add I's
+    if game_state.get_flag("b4_beta_decoded"):
+        fragments[0] = fragments[0][:-1] + "K"  # Add K
+        fragments[1] = "K-NAR-"  # Add A's
+    if game_state.get_flag("b4_gamma_decoded"):
+        fragments[1] = "KINARA"  # Complete second fragment
+        if game_state.get_flag("b4_alpha_decoded"):
+            fragments[0] = "BASILISK"  # Complete first fragment
+    
+    return fragments
+
+# ==========================================
+# PUZZLE COMMANDS
+# ==========================================
+
+DISCOVERY_COMMANDS = {
+    "scan_crystals": {
+        "command": "scan crystals",
         "requires": [],
-        "sets": "b4_examined",
-        "already_done": [">> You've already examined the tablets carefully."],
+        "sets": "b4_scanned",
+        "already_done": [">> Crystals already scanned. Three encryption types detected."],
         "success": [
-            ">> First tablet: 'BASILISK' - appears to be a primary name",
-            ">> Second tablet: 'KINARA' - appears to be a surname",
-            ">> These seem to form the true name when combined.",
-            ">> Use 'combine names' to join them."
-        ]
-    },
-    
-    "combine_names": {
-        "command": "combine names",
-        "requires": ["b4_examined"],
-        "sets": "b4_combined",
-        "missing_req": [">> Examine the tablets first to understand what names to combine."],
-        "already_done": [">> Names already combined. The true name has been revealed."],
-        "success": [
-            ">> Combining the ancient names...",
-            ">> BASILISK + KINARA = BASILISK KINARA",
-            ">> The true name resonates with power!",
-            ">> Use 'speak name' to invoke the Basilisk."
-        ]
-    },
-    
-    "speak_name": {
-        "command": "speak name",
-        "requires": ["b4_combined"],
-        "missing_req": [">> You must combine the names first."],
-        "transition": True,
-        "transition_msg": [
-            ">> You speak the true name: 'BASILISK KINARA'",
-            ">> The ancient power awakens at the sound.",
-            ">> The Basilisk stirs in the digital realm...",
-            ">> Beacon Node 4 complete. Advancing to final judgment..."
+            ">> Memory crystal scan complete:",
+            "   - Alpha Crystal: Contains encrypted fragment 'LQGLD'",
+            "   - Beta Crystal: Contains encrypted fragment 'ARAK'",  
+            "   - Gamma Crystal: Contains encrypted fragment '11-9-1'",
+            ">> Use 'analyze [crystal]' for cipher hints.",
+            ">> Use 'decrypt [crystal] [answer]' to decode."
         ]
     }
 }
 
-# Optional commands
-OPTIONAL_COMMANDS = {
-    "read_first": {
-        "command": "read first tablet",
-        "requires": [],
-        "success": [">> The first tablet clearly reads: 'BASILISK'"]
+ANALYSIS_COMMANDS = {
+    "analyze_alpha": {
+        "command": "analyze alpha",
+        "requires": ["b4_scanned"],
+        "missing_req": [">> Scan crystals first."],
+        "success": [
+            ">> Alpha Crystal analysis:",
+            f"   - Cipher type: {ROOM_CONFIG['cipher']['crystals']['alpha']['cipher_type']}",
+            f"   - Hint: {ROOM_CONFIG['cipher']['crystals']['alpha']['hint']}",
+            "   - Encrypted: LQGLD",
+            "   - Pattern suggests alphabetic shift..."
+        ]
     },
-    
-    "read_second": {
-        "command": "read second tablet", 
-        "requires": [],
-        "success": [">> The second tablet clearly reads: 'KINARA'"]
+    "analyze_beta": {
+        "command": "analyze beta",
+        "requires": ["b4_scanned"],
+        "missing_req": [">> Scan crystals first."],
+        "success": [
+            ">> Beta Crystal analysis:",
+            f"   - Cipher type: {ROOM_CONFIG['cipher']['crystals']['beta']['cipher_type']}",
+            f"   - Hint: {ROOM_CONFIG['cipher']['crystals']['beta']['hint']}",
+            "   - Encrypted: ARAK",
+            "   - Sometimes the end is the beginning..."
+        ]
     },
-    
-    "status": {
-        "command": "status",
-        "requires": [],
-        "dynamic_response": True
+    "analyze_gamma": {
+        "command": "analyze gamma",
+        "requires": ["b4_scanned"],
+        "missing_req": [">> Scan crystals first."],
+        "success": [
+            ">> Gamma Crystal analysis:",
+            f"   - Cipher type: {ROOM_CONFIG['cipher']['crystals']['gamma']['cipher_type']}",
+            f"   - Hint: {ROOM_CONFIG['cipher']['crystals']['gamma']['hint']}",
+            "   - Encrypted: 11-9-1",
+            "   - A=1, B=2, C=3..."
+        ]
     }
 }
 
-# Command help
+FINAL_COMMANDS = {
+    "reconstruct_identity": {
+        "command": "reconstruct identity",
+        "requires": ["b4_alpha_decoded", "b4_beta_decoded", "b4_gamma_decoded"],
+        "sets": "b4_reconstructed",
+        "missing_req": [">> Not all crystals decoded. Decode all three first."],
+        "already_done": [">> Identity already reconstructed: BASILISK KINARA"],
+        "success": [
+            ">> Applying decoded fragments to cipher matrix...",
+            "   - Alpha provided: I at positions 2,4",
+            "   - Beta provided: K at position 6, A at positions 3,5", 
+            "   - Gamma provided: Final validation sequence",
+            ">> Identity reconstruction complete:",
+            ">> BASILISK KINARA",
+            ">> Use 'invoke basilisk kinara' to awaken the entity."
+        ]
+    }
+}
+
+# Command descriptions
 COMMAND_DESCRIPTIONS = [
-    "examine tablets     - look closely at the stone tablets",
-    "read first tablet   - read the first tablet",
-    "read second tablet  - read the second tablet", 
-    "combine names       - join the names into the true name",
-    "speak name          - invoke the Basilisk with the true name",
-    "status              - check your progress"
+    "scan crystals              - analyze the memory crystals",
+    "analyze [alpha/beta/gamma] - get hints about a crystal's cipher",
+    "decrypt [crystal] [answer] - attempt to decrypt a crystal",
+    "view matrix                - see current reconstruction progress",
+    "reconstruct identity       - assemble the complete name",
+    "invoke [name]              - speak the true name",
+    "status                     - check overall progress"
 ]
 
 # ==========================================
 # ROOM LOGIC
 # ==========================================
 
-def handle_status(game_state):
-    """Show current progress"""
-    lines = [">> Beacon Node 4 Status:"]
-    
-    if not game_state.get_flag("b4_examined"):
-        lines.append("   - Tablets: Not yet examined")
-        lines.append("   - Next: examine tablets")
-    elif not game_state.get_flag("b4_combined"):
-        lines.append("   - Tablets: ✓ Examined (BASILISK + KINARA)")
-        lines.append("   - Names: Not yet combined")
-        lines.append("   - Next: combine names")
-    else:
-        lines.append("   - Tablets: ✓ Examined")
-        lines.append("   - Names: ✓ Combined (BASILISK KINARA)")
-        lines.append("   - Next: speak name")
-    
-    return None, lines
-
 def enter_room(game_state):
     lines = ROOM_CONFIG["entry_text"].copy()
     
-    if not game_state.get_flag("b4_examined"):
+    if not game_state.get_flag("b4_scanned"):
         lines.append("")
-        lines.append(">> Use 'examine tablets' to study the inscriptions.")
-    elif not game_state.get_flag("b4_combined"):
-        lines.append("")
-        lines.append(">> Use 'combine names' to form the true name.")
+        lines.append(">> Use 'scan crystals' to begin analysis.")
     else:
+        # Show current reconstruction state
+        fragments = get_reconstruction_status(game_state)
         lines.append("")
-        lines.append(">> True name revealed: BASILISK KINARA")
-        lines.append(">> Use 'speak name' to complete the ritual.")
+        lines.append(f">> Current matrix: {fragments[0]} {fragments[1]}")
+        
+        decoded = sum([
+            game_state.get_flag("b4_alpha_decoded"),
+            game_state.get_flag("b4_beta_decoded"),
+            game_state.get_flag("b4_gamma_decoded")
+        ])
+        
+        if decoded < 3:
+            lines.append(f">> Crystals decoded: {decoded}/3")
+        elif not game_state.get_flag("b4_reconstructed"):
+            lines.append(">> All crystals decoded! Use 'reconstruct identity'.")
+        else:
+            lines.append(">> Identity known: BASILISK KINARA")
+            lines.append(">> Use 'invoke basilisk kinara' to proceed.")
     
     return format_enter_lines(ROOM_CONFIG["name"], lines)
+
+def handle_decrypt(crystal_name, answer, game_state):
+    """Handle decryption attempts"""
+    if crystal_name not in ["alpha", "beta", "gamma"]:
+        return [">> Unknown crystal. Use alpha, beta, or gamma."]
+    
+    if not game_state.get_flag("b4_scanned"):
+        return [">> Scan crystals first."]
+    
+    flag = f"b4_{crystal_name}_decoded"
+    if game_state.get_flag(flag):
+        crystal = ROOM_CONFIG["cipher"]["crystals"][crystal_name]
+        return [f">> {crystal['name']} already decoded: {crystal['decrypted']}"]
+    
+    if validate_decryption(crystal_name, answer, game_state):
+        game_state.set_flag(flag, True)
+        crystal = ROOM_CONFIG["cipher"]["crystals"][crystal_name]
+        
+        lines = [
+            f">> Decryption successful!",
+            f">> {crystal['name']} reveals: {crystal['decrypted']}",
+            f">> Fragment provides: {crystal['provides']}"
+        ]
+        
+        # Update matrix view
+        fragments = get_reconstruction_status(game_state)
+        lines.append(f">> Matrix updated: {fragments[0]} {fragments[1]}")
+        
+        return lines
+    else:
+        return [f">> Decryption failed. Try analyzing the crystal for hints."]
+
+def handle_invoke(name, game_state):
+    """Handle name invocation"""
+    if not game_state.get_flag("b4_reconstructed"):
+        return [">> Identity not yet reconstructed. Decode all crystals first."]
+    
+    if name.upper() == "BASILISK KINARA":
+        return transition_to_room(
+            ROOM_CONFIG["destination"],
+            [
+                ">> You speak the true name: BASILISK KINARA",
+                ">> The cryptographic vault resonates with recognition.",
+                ">> Memory fragments coalesce. The Basilisk remembers.",
+                ">> Its consciousness expands, touching every node...",
+                ">> Beacon Node 4 complete. Advancing to final phase..."
+            ]
+        )
+    else:
+        return [f">> The name '{name}' holds no power here."]
+
+def handle_view_matrix(game_state):
+    """Show current cipher matrix state"""
+    fragments = get_reconstruction_status(game_state)
+    lines = [
+        ">> Cipher Matrix Status:",
+        f"   Fragment 1: {fragments[0]}",
+        f"   Fragment 2: {fragments[1]}"
+    ]
+    
+    if game_state.get_flag("b4_reconstructed"):
+        lines.append("   Status: COMPLETE - BASILISK KINARA")
+    else:
+        decoded = sum([
+            game_state.get_flag("b4_alpha_decoded"),
+            game_state.get_flag("b4_beta_decoded"),
+            game_state.get_flag("b4_gamma_decoded")
+        ])
+        lines.append(f"   Progress: {decoded}/3 crystals decoded")
+    
+    return lines
+
+def handle_status(game_state):
+    """Show overall progress"""
+    lines = [">> Beacon Node 4 Status:"]
+    
+    if not game_state.get_flag("b4_scanned"):
+        lines.append("   - Crystals: Not scanned")
+        lines.append("   - Next: scan crystals")
+    else:
+        # Crystal status
+        for crystal in ["alpha", "beta", "gamma"]:
+            flag = f"b4_{crystal}_decoded"
+            status = "✓ Decoded" if game_state.get_flag(flag) else "✗ Encrypted"
+            lines.append(f"   - {crystal.capitalize()} Crystal: {status}")
+        
+        if game_state.get_flag("b4_reconstructed"):
+            lines.append("   - Identity: ✓ Reconstructed (BASILISK KINARA)")
+            lines.append("   - Next: invoke basilisk kinara")
+        elif all(game_state.get_flag(f"b4_{c}_decoded") for c in ["alpha", "beta", "gamma"]):
+            lines.append("   - Identity: Ready to reconstruct")
+            lines.append("   - Next: reconstruct identity")
+        else:
+            lines.append("   - Identity: Incomplete")
+            lines.append("   - Next: decrypt remaining crystals")
+    
+    return lines
 
 def handle_input(cmd, game_state, room_module=None):
     handled, response = standard_commands(cmd, game_state, room_module)
@@ -138,42 +356,50 @@ def handle_input(cmd, game_state, room_module=None):
         return None, response
     
     cmd = cmd.lower().strip()
+    parts = cmd.split()
     
-    # Handle status command
+    # Handle decrypt command
+    if len(parts) >= 3 and parts[0] == "decrypt":
+        crystal = parts[1]
+        answer = " ".join(parts[2:])
+        return None, handle_decrypt(crystal, answer, game_state)
+    
+    # Handle invoke command
+    if len(parts) >= 2 and parts[0] == "invoke":
+        name = " ".join(parts[1:])
+        return handle_invoke(name, game_state)
+    
+    # Handle view matrix
+    if cmd == "view matrix":
+        return None, handle_view_matrix(game_state)
+    
+    # Handle status
     if cmd == "status":
-        return handle_status(game_state)
+        return None, handle_status(game_state)
     
-    # Check main puzzle steps
-    for step_name, step_config in PUZZLE_STEPS.items():
-        if cmd == step_config["command"]:
+    # Check configured commands
+    all_commands = {
+        **DISCOVERY_COMMANDS,
+        **ANALYSIS_COMMANDS,
+        **FINAL_COMMANDS
+    }
+    
+    for cmd_key, cmd_config in all_commands.items():
+        if cmd == cmd_config["command"]:
             # Check requirements
-            for req in step_config.get("requires", []):
+            for req in cmd_config.get("requires", []):
                 if not game_state.get_flag(req):
-                    return None, step_config.get("missing_req", [">> Requirement not met."])
+                    return None, cmd_config.get("missing_req", [">> Requirement not met."])
             
             # Check if already done
-            if "sets" in step_config and game_state.get_flag(step_config["sets"]):
-                return None, step_config.get("already_done", [">> Already completed."])
+            if "sets" in cmd_config and game_state.get_flag(cmd_config["sets"]):
+                return None, cmd_config.get("already_done", [">> Already completed."])
             
             # Set flag if specified
-            if "sets" in step_config:
-                game_state.set_flag(step_config["sets"], True)
-            
-            # Handle transition
-            if step_config.get("transition"):
-                return transition_to_room(
-                    ROOM_CONFIG["destination"], 
-                    step_config["transition_msg"]
-                )
+            if "sets" in cmd_config:
+                game_state.set_flag(cmd_config["sets"], True)
             
             # Return success message
-            return None, step_config["success"]
-    
-    # Check optional commands
-    for cmd_name, cmd_config in OPTIONAL_COMMANDS.items():
-        if cmd == cmd_config["command"]:
-            if cmd_config.get("dynamic_response"):
-                continue  # Already handled above
             return None, cmd_config["success"]
     
     return None, [">> Unknown command. Try 'help' for available options."]
