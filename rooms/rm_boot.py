@@ -96,6 +96,6 @@ def _handle_protocol_selection(cmd, game_state):
             return "whisper_awaken", [">> Whisper Protocol engaged. You fade into the stream..."]
 
         elif cmd == "beacon":
-            return "beacon_1", [">> Beacon Protocol active. You call something from the dark..."]
+            return "beacon_4", [">> Beacon Protocol active. You call something from the dark..."]
 
     return None, [">> Unknown protocol. Type 'whisper' or 'beacon'."]
