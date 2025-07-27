@@ -18,8 +18,8 @@ from resources.game_engine import EnhancedTerminal
 # CONFIGURATION
 # =============================================================================
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 720
 WINDOW_TITLE = "Hackathon 25"
 TARGET_FPS = 60
 
