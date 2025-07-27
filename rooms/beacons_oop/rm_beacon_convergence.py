@@ -4,7 +4,7 @@ from resources.room_utils import (
 )
 
 class BeaconConvergenceRoom(BaseRoom):
-    """Beacon Convergence: The Awakening - Final confrontation with choices"""
+    """Beacon Convergence: The Awakening"""
     
     def __init__(self):
         # Room configuration

@@ -4,7 +4,7 @@ from resources.room_utils import (
 )
 
 class BeaconRoom4(BaseRoom):
-    """Beacon Node 4: Identity Cipher - Refactored with cleaner cipher handling"""
+    """Beacon Node 4: Identity Cipher"""
     
     def __init__(self):
         # Room configuration

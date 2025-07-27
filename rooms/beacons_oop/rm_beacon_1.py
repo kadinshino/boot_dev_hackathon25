@@ -4,7 +4,7 @@ from resources.room_utils import (
 )
 
 class BeaconRoom1(BaseRoom):
-    """Beacon Node 1 - Refactored with reduced duplication"""
+    """Beacon Node 1"""
     
     def __init__(self):
         config = RoomConfig(

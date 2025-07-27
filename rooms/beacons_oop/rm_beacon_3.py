@@ -4,7 +4,7 @@ from resources.room_utils import (
 )
 
 class BeaconRoom3(BaseRoom):
-    """Beacon Node 3: Neural Network - Refactored with grid connection logic"""
+    """Beacon Node 3: Neural Network"""
     
     def __init__(self):
         # Room configuration

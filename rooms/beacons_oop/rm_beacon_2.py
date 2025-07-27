@@ -5,7 +5,7 @@ from resources.room_utils import (
 )
 
 class BeaconRoom2(TimedPuzzleRoom):
-    """Beacon Node 2: Pulse Synchronization - Refactored"""
+    """Beacon Node 2: Pulse Synchronization"""
     
     def __init__(self):
         # Room configuration

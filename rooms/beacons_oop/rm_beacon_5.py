@@ -5,7 +5,7 @@ from resources.room_utils import (
 import random
 
 class BeaconRoom5(BaseRoom):
-    """Beacon Node 5: Echo Chamber - Refactored with pattern matching puzzle"""
+    """Beacon Node 5: Echo Chamber"""
     
     def __init__(self):
         # Room configuration
