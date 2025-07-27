@@ -200,9 +200,10 @@ if cmd == "debug":
 For detailed development documentation, see:
 
 - [Quick Start](docs/quickstart.md)
+- [Game Architecture](docs/architecture.md)
 - [Room Development Guide](docs/room-development.md)
 - [Puzzle Design Patterns](docs/puzzle-patterns.md)
-- [Game Architecture](docs/architecture.md)
+- [Build & Export Guide](BUILD_GUIDE.md)
 - [Read the full game description and info here →](STORE_PAGE.md)
 
 ## 🤝 Contributing
