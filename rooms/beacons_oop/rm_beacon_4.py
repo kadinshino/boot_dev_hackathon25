@@ -1,6 +1,6 @@
 from resources.room_utils import (
     BaseRoom, RoomConfig, PuzzleCommand,
-    format_enter_lines, transition_to_room
+    transition_to_room
 )
 
 class BeaconRoom4(BaseRoom):

@@ -1,7 +1,6 @@
 import time
 from resources.room_utils import (
-    TimedPuzzleRoom, RoomConfig, PuzzleCommand,
-    format_enter_lines, transition_to_room
+    TimedPuzzleRoom, RoomConfig, PuzzleCommand
 )
 
 class BeaconRoom2(TimedPuzzleRoom):
