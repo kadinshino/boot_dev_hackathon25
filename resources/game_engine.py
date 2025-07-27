@@ -209,6 +209,7 @@ class GameEngine:
         self.pygame_terminal = pygame_terminal
         self.game_state = GameState()
         self.in_game_mode = False
+        self.loaded_rooms = {}
 
     def process_game_command(self, command: str) -> List[str]:
         """Process a game command and return output lines."""
@@ -369,6 +370,20 @@ class GameEngine:
             ]
         except Exception as e:
             return [f"Error getting room commands: {str(e)}"]
+
+    def get_distance(self, room_a: str, room_b: str) -> int:
+            """Crude distance based on trailing room numbers (e.g. rm_beacon_1)"""
+            try:
+                return abs(int(room_a[-1]) - int(room_b[-1]))
+            except ValueError:
+                return 99  # Arbitrary large distance if format doesn't match
+
+    def unload_distant_rooms(self, current_room: str):
+        """Unload rooms more than 3 steps away"""
+        for room_name in list(self.loaded_rooms.keys()):
+            if self.get_distance(current_room, room_name) > 3:
+                print(f">> Unloading distant room: {room_name}")
+                del self.loaded_rooms[room_name]
 
     def enter_game_mode(self) -> List[str]:
         """Enter game mode and return initialization messages."""

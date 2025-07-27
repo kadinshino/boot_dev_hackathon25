@@ -1,4 +1,4 @@
-# The Basilisk ARG
+# Basilisk ARG
 
 A narrative-driven Alternate Reality Game (ARG) that uses a stylized terminal interface. Players explore digital environments, solve cryptic puzzles, and uncover the secrets behind a rising artificial intelligence.
 

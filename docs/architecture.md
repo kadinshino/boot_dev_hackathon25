@@ -1,8 +1,11 @@
+````markdown
 # Architecture Overview
 
 ## Design Philosophy
 
-The Basilisk ARG is built with two core principles in mind: **accessibility for modders** and **professional code organization**. Drawing from our experience with GameMaker Language (GML), we've created a Python-based architecture that feels familiar to game developers while remaining approachable for ARG fans who want to create their own content.
+The Basilisk ARG is built on two core principles: **accessibility for modders** and **professional code organization**. Inspired by development patterns from GameMaker Language (GML), the goal was to create a Python-based system that feels familiar to game developers while remaining approachable for ARG fans who want to build their own content.
+
+---
 
 ## Why Two Development Styles?
 
@@ -20,15 +23,18 @@ PUZZLE_PATH = {
         "success": ["The terminal flickers to life."]
     }
 }
-```
+````
 
-**Why we built this:**
-- **Zero barrier to entry** - Anyone who can edit a text file can create rooms
-- **Self-documenting** - The structure explains itself
-- **ARG tradition** - Many ARGs thrive on community-created content
-- **Rapid prototyping** - Test ideas without learning complex systems
+**Why this exists:**
 
-This approach mirrors configuration files from classic modding communities, where players could create new content by editing simple data files without touching core code.
+* **Zero barrier to entry** – Anyone who can edit a text file can build content
+* **Self-documenting** – The structure is readable and easy to modify
+* **ARG tradition** – Community-driven content is central to ARGs
+* **Rapid prototyping** – Test rooms without writing Python classes
+
+This mirrors classic modding formats, where players could extend games using config-style files.
+
+---
 
 ### Object-Oriented Rooms: For Complex Mechanics
 
@@ -42,17 +48,53 @@ class DigitalArchive(BaseRoom):
         super().__init__(config)
 ```
 
-**Why we built this:**
-- **Clean code organization** - Encapsulation and inheritance for complex puzzles
-- **Reusable components** - Base classes for common room types
-- **State management** - Easier to handle complex game states
-- **Professional structure** - Maintainable for long-term development
+**Why this exists:**
+
+* **Clean structure** – Encapsulation and inheritance for advanced logic
+* **Reusable code** – Shared behavior across rooms
+* **Better state handling** – Supports complex progression
+* **Long-term maintainability** – Ideal for structured development
+
+---
+
+## 🏗️ Project Directory Layout
+
+*An overview of the folder structure for `boot_dev_hackathon25`*
+
+```
+boot_dev_hackathon25/        Root folder (Boot.dev Hackathon 2025 project)
+├── main.py                  Main pygame application
+├── resources/               Core game engine and utilities
+│   ├── game_engine.py
+│   ├── room_utils.py
+│   └── terminal_themes.py
+├── rooms/                   All room scripts (Beacon & Whisper paths)
+│   ├── rm_boot.py           Starting room
+│   ├── rm_beacon_*.py       Beacon path rooms
+│   ├── rm_whisper_*.py      Whisper path rooms
+│   └── ...
+├── dist/                    Output folder for builds
+│   ├── BASILISK_PROTOCOL.exe
+│   └── build.bat
+├── docs/                    Developer documentation
+│   ├── quickstart.md
+│   ├── room-development.md
+│   ├── puzzle-patterns.md
+│   └── architecture.md
+├── BUILD_GUIDE.md           Instructions for exporting the game
+├── STORE_PAGE.md            Game description for storefronts (e.g. itch.io)
+├── LICENSE                  License and attribution information
+└── README.md                General project overview
+```
+
+---
 
 ## GameMaker Heritage
 
-Coming from GameMaker development, we applied several GML patterns to Python:
+Coming from GameMaker development, we carried over familiar design patterns.
 
 ### Room-Based Architecture
+
 ```
 GameMaker:                     Python Equivalent:
 ├── Rooms/                     ├── rooms/
@@ -61,26 +103,28 @@ GameMaker:                     Python Equivalent:
 │   └── rm_boss               │   └── rm_boss.py
 ```
 
-Just like GameMaker's room system, each room is:
-- **Self-contained** - All logic for a room lives in one file
-- **Independently loadable** - Rooms can be added/removed without affecting others
-- **Event-driven** - Rooms respond to player inputs (like GML events)
+Just like GameMaker’s system, each room in Basilisk is:
+
+* **Self-contained** – All logic in one file
+* **Independently loadable** – Can be added/removed freely
+* **Event-driven** – Responds to user input like GML events
+
+---
 
 ### Event System Translation
 
-```python
-# GML Event System → Python Methods
-Create Event      → def __init__(self)
-Step Event        → def update(self, game_state)  
-Key Press Event   → def handle_input(self, cmd, game_state)
-Draw Event        → def get_display_text(self, game_state)
-Room Start        → def enter_room(self, game_state)
-Room End          → def exit_room(self, game_state)
-```
+| **GML Event**   | **Python Equivalent**                     |
+| --------------- | ----------------------------------------- |
+| Create Event    | `def __init__(self)`                      |
+| Step Event      | `def update(self, game_state)`            |
+| Key Press Event | `def handle_input(self, cmd, game_state)` |
+| Draw Event      | `def get_display_text(self, game_state)`  |
+| Room Start      | `def enter_room(self, game_state)`        |
+| Room End        | `def exit_room(self, game_state)`         |
+
+---
 
 ### State Management Pattern
-
-Drawing from GML's instance variables and global variables:
 
 ```python
 # GML: global.player_health = 100
@@ -93,85 +137,97 @@ Drawing from GML's instance variables and global variables:
 # Python: transition_to_room("rm_next", ["Leaving..."])
 ```
 
+---
+
 ## Modular Design
 
 ### Core System (Protected)
+
 ```
 resources/
-├── game_engine.py      # Core engine - rarely modified
-├── room_utils.py       # Utilities and base classes
-└── terminal_themes.py  # Visual customization
+├── game_engine.py      # Core engine (stable)
+├── room_utils.py       # Base classes and utilities
+└── terminal_themes.py  # Theme configurations
 ```
 
 ### Content Layer (Moddable)
+
 ```
 rooms/
-├── rm_*.py            # All game content
-├── custom_*.py        # Community rooms
-└── mod_*.py           # Player modifications
+├── rm_*.py             # Official room scripts
+├── custom_*.py         # Community-created rooms
+└── mod_*.py            # Player modifications
 ```
 
-This separation ensures:
-- **Core stability** - Engine remains untouched by mods
-- **Easy distribution** - Share a single .py file to add content
-- **Safe experimentation** - Broken mods won't crash the game
-- **Version compatibility** - Mods work across updates
+This structure ensures:
+
+* **Core stability** – Engine files stay untouched
+* **Easy sharing** – Modders can share one `.py` file
+* **Safe experimentation** – Mods don’t break the system
+* **Cross-version compatibility** – Mods survive updates
+
+---
 
 ## Module Loading System
 
-Our dynamic loading system (inspired by GML's resource tree) automatically discovers and loads rooms:
+Inspired by GameMaker’s dynamic resource tree, Basilisk uses auto-discovery:
 
 ```python
-# Automatic discovery - just like GameMaker's resource tree
+# Automatically load any room that starts with "rm_"
 for file in os.listdir("rooms/"):
     if file.startswith("rm_") and file.endswith(".py"):
-        # Automatically available in game
+        # Load and register
 ```
 
-This means:
-- **No registration required** - Drop in a file and it works
-- **Hot-swappable** - Add/remove rooms without recompiling
-- **Conflict-free** - Rooms don't interfere with each other
+**Benefits:**
+
+* No need to register rooms manually
+* Add/remove content without restarts
+* Rooms remain sandboxed and conflict-free
+
+---
 
 ## Why This Architecture?
 
-### 1. **Lowering the Barrier**
-ARGs thrive on community participation. By offering dictionary-based rooms, we enable:
-- Writers to create story content
-- Puzzle designers to craft challenges  
-- Fans to extend the narrative
-- No programming knowledge required
+### 🧩 Lowering the Barrier
 
-### 2. **Professional Foundation**
-The OOP system provides:
-- Maintainable codebase for core developers
-- Complex puzzle implementations
-- Reusable components and patterns
-- Clean separation of concerns
+* Writers and puzzle designers can create without programming
+* Community-created content is encouraged
+* No custom tools required — just a text editor
 
-### 3. **Familiar Patterns**
+### 🧠 Professional Foundation
+
+* OOP-based rooms enable advanced puzzle structures
+* Shared logic via base classes (e.g. `BaseRoom`, `PuzzleCommand`)
+* Cleaner long-term maintenance
+
+### 🧪 Familiar Patterns
+
 GameMaker developers will recognize:
-- Room-based game flow
-- Event-driven architecture
-- Global state management
-- Resource organization
 
-### 4. **Best of Both Worlds**
-Players can:
-- Start with simple dictionary rooms
-- Graduate to OOP as they learn
-- Mix both styles in one project
-- Choose the right tool for each room
+* Room-based flow
+* Event-driven input
+* Global state model
+* Asset-like file structure
+
+### 🧰 Best of Both Worlds
+
+* Beginners can start with dictionary rooms
+* Devs can build OOP-based rooms
+* Both styles work together in the same project
+
+---
 
 ## Example: From GML to Python
 
-### GameMaker Room Script:
+### GameMaker
+
 ```gml
 // Room Creation Code
 global.terminal_active = false;
 instance_create_layer(x, y, "Instances", obj_terminal);
 
-// obj_terminal Step Event
+// Step Event
 if (keyboard_check_pressed(vk_space)) {
     if (distance_to_object(obj_player) < 32) {
         global.terminal_active = true;
@@ -180,7 +236,10 @@ if (keyboard_check_pressed(vk_space)) {
 }
 ```
 
-### Python Equivalent (Dictionary):
+---
+
+### Python – Dictionary Room
+
 ```python
 PUZZLE_PATH = {
     "activate_terminal": {
@@ -191,7 +250,10 @@ PUZZLE_PATH = {
 }
 ```
 
-### Python Equivalent (OOP):
+---
+
+### Python – OOP Room
+
 ```python
 class TerminalRoom(BaseRoom):
     def _setup_puzzles(self):
@@ -204,30 +266,28 @@ class TerminalRoom(BaseRoom):
         )
 ```
 
+---
+
 ## Performance Considerations
 
-### Text-Based Advantage
+### Text-Based Advantages
 
-Coming from GameMaker, we're used to optimizing sprite rendering, collision detection, and draw calls. The Basilisk's text-based nature eliminates these concerns, allowing us to focus on:
+No sprite rendering or collision detection means we focus on:
 
 ```python
-# Traditional GameMaker Performance Concerns:
-- Sprite batching and texture pages
-- Instance deactivation outside view
-- Collision optimization with spatial hashing
-
-# The Basilisk Performance Concerns:
-- String operations and text parsing
-- Module loading times
-- State dictionary lookups
+# Basilisk Performance Priorities:
+- Text parsing
+- String operations
+- Dynamic imports
+- Flag lookups
 ```
 
-### Module Loading Strategy
+---
 
-Unlike GameMaker's compile-time resource tree, we use dynamic imports:
+### Lazy Room Loading
 
 ```python
-# Lazy loading - rooms load only when needed
+# Only load room module if needed
 def load_room(room_name):
     if room_name not in loaded_rooms:
         module = importlib.import_module(f"rooms.rm_{room_name}")
@@ -235,145 +295,90 @@ def load_room(room_name):
     return loaded_rooms[room_name]
 ```
 
-**Performance Impact:**
-- First room entry: ~5-10ms load time
-- Subsequent entries: <1ms (cached)
-- Memory usage: ~1-2KB per room
+* First load: \~5–10ms
+* Re-entry (cached): <1ms
+* Memory per room: \~1–2KB
 
-### State Management Efficiency
+---
 
-We chose dictionaries over classes for game state (similar to GML's ds_map):
+### Unloading Distant Rooms
 
-```python
-# Efficient O(1) lookups
-game_state.flags["terminal_active"]  # Fast
-game_state.get_flag("terminal_active")  # Convenience wrapper
-
-# Avoid repeated calculations
-# Bad:
-for i in range(100):
-    if game_state.get("complex_calculation"):
-        # Recalculates every time
-
-# Good:
-result = game_state.get("complex_calculation")
-for i in range(100):
-    if result:
-        # Uses cached value
-```
-
-### Dictionary vs OOP Performance
-
-| Operation | Dictionary Room | OOP Room | Notes |
-|-----------|----------------|----------|-------|
-| Load Time | ~5ms | ~8ms | Class instantiation overhead |
-| Command Processing | O(n) | O(1) with hash | OOP can use method dispatch |
-| Memory Usage | ~1KB | ~2KB | Object overhead |
-| Puzzle Complexity | Linear | Optimizable | OOP allows caching strategies |
-
-### Optimization Tips
-
-#### For Dictionary Rooms:
-```python
-# Pre-sort commands by frequency
-PUZZLE_PATH = {
-    # Most common commands first
-    "look": {...},
-    "examine": {...},
-    # Rare commands last
-    "whisper ancient incantation": {...}
-}
-
-# Use early returns
-def handle_input(cmd, game_state):
-    # Check most common cases first
-    if cmd in ["look", "l"]:
-        return quick_look_response()
-    
-    # Then check puzzle paths
-    return process_puzzle_command(cmd, game_state, PUZZLE_PATH)
-```
-
-#### For OOP Rooms:
-```python
-class OptimizedRoom(BaseRoom):
-    def __init__(self):
-        super().__init__(config)
-        # Pre-compile regex patterns
-        self.patterns = {
-            "use_item": re.compile(r"^use (\w+) on (\w+)$"),
-            "combine": re.compile(r"^combine (\w+) with (\w+)$")
-        }
-        
-        # Cache computed values
-        self._command_map = self._build_command_map()
-    
-    def _build_command_map(self):
-        """Build hash map for O(1) command lookup"""
-        return {
-            "look": self._handle_look,
-            "examine": self._handle_examine,
-            # ... more mappings
-        }
-```
-
-### When Performance Matters
-
-Text adventures rarely hit performance limits, but consider optimization when:
-
-1. **Complex String Parsing**
-   ```python
-   # Slow: Multiple string operations
-   if "key" in cmd and "door" in cmd and cmd.startswith("use"):
-   
-   # Fast: Compiled regex
-   if self.use_pattern.match(cmd):
-   ```
-
-2. **Large State Spaces**
-   ```python
-   # For maze/grid puzzles with many states
-   class MazeRoom(BaseRoom):
-       def __init__(self):
-           # Pre-calculate valid moves
-           self.valid_moves = self._calculate_all_moves()
-   ```
-
-3. **Frequent State Checks**
-   ```python
-   # Cache complex conditions
-   def enter_room(self, game_state):
-       self.has_all_keys = all(
-           f"key_{i}" in game_state.inventory 
-           for i in range(5)
-       )
-   ```
-
-### Memory Considerations
-
-Unlike GameMaker's fixed room instances, Python modules stay loaded:
+Rooms persist in memory unless manually cleared. You can free memory with:
 
 ```python
-# Rooms persist in memory once loaded
-# Consider cleanup for large games:
-
 def unload_distant_rooms(current_room, game_state):
-    """Unload rooms more than 3 steps away"""
+    """Unload rooms more than 3 steps away (optional memory cleanup)."""
     for room_name in list(loaded_rooms.keys()):
         if get_distance(current_room, room_name) > 3:
             del loaded_rooms[room_name]
 ```
 
+> This is an optional optimization — call it manually after room transitions if needed.
+
+---
+
+### Dictionary vs OOP Room Performance
+
+| Operation          | Dictionary Room | OOP Room    | Notes                          |
+| ------------------ | --------------- | ----------- | ------------------------------ |
+| Load Time          | \~5ms           | \~8ms       | OOP has instantiation overhead |
+| Command Lookup     | O(n)            | O(1) w/ map | OOP enables faster dispatch    |
+| Memory Usage       | \~1KB           | \~2KB       | Class objects have overhead    |
+| Puzzle Flexibility | Linear          | High        | OOP allows advanced logic      |
+
+---
+
+## Optimization Tips
+
+### For Dictionary Rooms
+
+```python
+# Sort common commands to the top
+PUZZLE_PATH = {
+    "look": {...},
+    "examine": {...},
+    "rare_action": {...}
+}
+
+# Use early returns
+def handle_input(cmd, game_state):
+    if cmd in ["look", "l"]:
+        return quick_look_response()
+    return process_puzzle_command(cmd, game_state, PUZZLE_PATH)
+```
+
+---
+
+### For OOP Rooms
+
+```python
+class OptimizedRoom(BaseRoom):
+    def __init__(self):
+        super().__init__(config)
+        self.patterns = {
+            "use_item": re.compile(r"^use (\w+) on (\w+)$"),
+            "combine": re.compile(r"^combine (\w+) with (\w+)$")
+        }
+        self._command_map = self._build_command_map()
+
+    def _build_command_map(self):
+        return {
+            "look": self._handle_look,
+            "examine": self._handle_examine
+        }
+```
+
+---
+
 ## Conclusion
 
-This architecture represents a bridge between:
-- **Amateur creativity** and **professional development**
-- **Simple configuration** and **complex programming**
-- **GameMaker patterns** and **Python idioms**
-- **Individual rooms** and **cohesive experience**
+This architecture bridges:
 
-By supporting both approaches, The Basilisk ARG creates an ecosystem where anyone can contribute, from writers crafting narrative moments to programmers building complex puzzles. The modular design ensures that the community can extend and modify the game while maintaining a stable, professional core.
+* **Amateur creativity** and **professional engineering**
+* **Simple configuration** and **powerful abstraction**
+* **GameMaker traditions** and **Pythonic design**
+* **Individual rooms** and **cohesive ARG experiences**
 
-This dual approach isn't a compromise—it's a recognition that great ARGs are built by communities, and communities include people with different skills and comfort levels. Whether you're editing your first dictionary or inheriting from BaseRoom, you're part of The Basilisk's evolution.
+By supporting both dictionary and OOP room styles, *The Basilisk ARG* welcomes creators of all skill levels. Writers, puzzle designers, and developers can contribute meaningfully to a shared world, with tools that match their comfort zone.
 
-*The architecture is watching. Every room matters.*
+> *The architecture is watching. Every room matters.*
