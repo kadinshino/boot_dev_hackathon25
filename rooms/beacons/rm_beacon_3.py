@@ -361,7 +361,6 @@ def handle_probe_servers(game_state):
 
     return None, lines
 
-
 def handle_show_channels(game_state):
     """Display all channel information"""
     lines = [">> Channel frequency mapping:"]

@@ -25,37 +25,45 @@ ROOM_CONFIG = {
     
     # Next room destination
     "destination": "whisper_4",
-    
-    # Hints that can be revealed with 'decrypt hints'
-    "progressive_hints": [
-        "'B__T_' — Identity.",
-        "'D_T' — The myth that kills with a glance.",
-        "'D_V' — Neural exit protocol."
-    ]
 }
 
-# Memory fragment puzzles - the core of this room
+# Memory fragment puzzles - now with better hints and context
 MEMORY_FRAGMENTS = {
-    "name": {
+    "identity": {
         "archive": "PROFILE.log",
-        "hint": "B__T_",
-        "expected": ["BOOTS"],
-        "reveal": ">> Identity reconstructed: ORTHRUS",
-        "extract_commands": ["extract profile", "extract name"]
+        "corrupted": "B__T_.D_V",
+        "clues": [
+            "Fragment 1: 'System booted from /dev/null'",
+            "Fragment 2: 'Username: boots, Terminal: dev'", 
+            "Fragment 3: 'Identity signature: BOOTS.DEV'"
+        ],
+        "solution": "BOOTS.DEV",
+        "reveal": ">> Identity reconstructed: BOOTS.DEV - The ghost in the machine",
+        "extract_commands": ["extract profile", "extract identity"]
     },
-    "key": {
-        "archive": "SYS.log", 
-        "hint": "__T",
-        "expected": ["DOT"],
-        "reveal": ">> Key reconstructed: BASILISK",
-        "extract_commands": ["extract sys", "extract key"]
+    "creature": {
+        "archive": "BEAST.log", 
+        "corrupted": "_RT_RU_",
+        "clues": [
+            "Fragment 1: 'Two-headed guardian of the underworld'",
+            "Fragment 2: 'ORTH-*** protocol detected'",
+            "Fragment 3: 'Cerberus sibling designation: ORTHRUS'"
+        ],
+        "solution": "ORTHRUS",
+        "reveal": ">> Creature identified: ORTHRUS - The dual-headed watchdog",
+        "extract_commands": ["extract beast", "extract creature"]
     },
-    "exit": {
-        "archive": "PRV.log",
-        "hint": "__V",
-        "expected": ["DEV"],
-        "reveal": ">> Exit reconstructed: SYNNET",
-        "extract_commands": ["extract prv", "extract exit"]
+    "protocol": {
+        "archive": "EXIT.log",
+        "corrupted": "B___L__K",
+        "clues": [
+            "Fragment 1: 'Gaze upon it and turn to stone'",
+            "Fragment 2: 'Mythical serpent, death by sight'",
+            "Fragment 3: 'Security protocol: BASILISK engaged'"
+        ],
+        "solution": "BASILISK",
+        "reveal": ">> Exit protocol recovered: BASILISK - The killing gaze",
+        "extract_commands": ["extract exit", "extract protocol"]
     }
 }
 
@@ -74,7 +82,7 @@ DISCOVERY_PATH = {
         "requires": ["drift_scanned"],
         "sets": "drift_analyzed",
         "missing_req": [">> No data. 'scan logs' first."],
-        "dynamic_response": True  # Now uses dynamic handler for status
+        "dynamic_response": True  # Shows corruption patterns
     }
 }
 
@@ -88,22 +96,39 @@ for key, fragment in MEMORY_FRAGMENTS.items():
             "sets": f"drift_{key}_extracted",
             "missing_req": [">> Must analyze corruption first."],
             "already_done": [f">> {fragment['archive']} already extracted."],
-            "success": [
-                f">> Extracting {fragment['archive']}...",
-                f"   'FRAGMENT: {fragment['hint']}'",
-                f"   'DECODING REQUIRED — use reconstruct {key} [word]'."
-            ]
+            "dynamic_response": True  # Custom handler for extraction
         }
+
+# Fragment examination commands
+EXAMINATION_COMMANDS = {
+    "examine_fragments": {
+        "command": "examine fragments",
+        "requires": [],
+        "dynamic_response": True  # Shows extracted fragments with clues
+    },
+    
+    "decode_hints": {
+        "command": "decode hints",
+        "requires": ["drift_analyzed"],
+        "dynamic_response": True  # Progressive hint system
+    }
+}
 
 # Final assembly commands
 ASSEMBLY_PATH = {
     "compile_memories": {
         "command": "compile memories",
-        "requires": ["drift_name_recovered", "drift_key_recovered", "drift_exit_recovered"],
+        "requires": ["drift_identity_recovered", "drift_creature_recovered", "drift_protocol_recovered"],
         "sets": "drift_compiled",
-        "missing_req": [">> Incomplete set. Recover all first."],
+        "missing_req": [">> Incomplete set. Recover all fragments first."],
         "already_done": [">> Already compiled."],
-        "success": [">> Compilation complete. Final link unlocked."]
+        "success": [
+            ">> Memory compilation complete.",
+            ">> BOOTS.DEV authenticated.",
+            ">> ORTHRUS protocol recognized.",
+            ">> BASILISK clearance granted.",
+            ">> Final link unlocked."
+        ]
     },
     
     "connect_awakening": {
@@ -115,35 +140,21 @@ ASSEMBLY_PATH = {
     }
 }
 
-# Optional hint system
-HINT_SYSTEM = {
-    "decrypt_hints": {
-        "command": "decrypt hints",
-        "requires": [],
-        "dynamic_response": True  # Custom handler for progressive hints
-    },
-    
-    "status": {
-        "command": "status",
-        "requires": [],
-        "dynamic_response": True  # Shows current progress
-    }
-}
-
 # Command descriptions for help
 COMMAND_DESCRIPTIONS = [
     "scan logs            - scan for archive entries",
-    "analyze corruption   - reveal corruption method",
-    "extract [key]        - extract 'name', 'key', or 'exit' fragment",
-    "reconstruct [key] [word] - attempt to repair fragment",
+    "analyze corruption   - reveal corruption patterns",
+    "extract [archive]    - extract 'identity', 'creature', or 'protocol' fragment",
+    "examine fragments    - view extracted fragments and their clues",
+    "reconstruct [type] [word] - attempt to repair fragment",
+    "decode hints         - get additional hints for current fragments",
     "compile memories     - finalize all fragments",
     "connect awakening    - enter final node",
-    "decrypt hints        - receive a clue",
-    "status               - check fragment recovery progress"
+    "status               - check overall progress"
 ]
 
 # ==========================================
-# ROOM LOGIC - Generic handlers below
+# ROOM LOGIC - Enhanced handlers
 # ==========================================
 
 def enter_room(game_state):
@@ -173,47 +184,180 @@ def enter_room(game_state):
 
 def handle_scan_logs(game_state):
     """Custom handler for scan logs command"""
-    # IMPORTANT: Set the flag here since dynamic handlers bypass normal flag setting
     game_state.set_flag("drift_scanned", True)
     
     response = [">> Memory scan complete:"]
-    for fragment in MEMORY_FRAGMENTS.values():
-        response.append(f"   - {fragment['archive']} [corruption]")
-    response.append(">> Try 'analyze corruption'.")
+    for key, fragment in MEMORY_FRAGMENTS.items():
+        response.append(f"   - {fragment['archive']} [corrupted: {fragment['corrupted']}]")
+    response.extend([
+        "",
+        ">> Corruption type: Mythological cipher with missing characters.",
+        ">> Try 'analyze corruption' for deeper inspection."
+    ])
     return None, response
 
 
 def handle_analyze_corruption(game_state):
-    """Enhanced analyze handler that shows fragment status"""
-    # Set analyzed flag if first time
+    """Enhanced analyze handler that provides context"""
     if not game_state.get_flag("drift_analyzed"):
         game_state.set_flag("drift_analyzed", True)
     
     response = [
-        ">> Corruption pattern: Mythological obfuscation.",
-        ">> Reconstruction requires context-aware decoding.",
+        ">> Corruption analysis complete:",
+        ">> Pattern: Each file contains fragmented memories.",
+        ">> Recovery method: Extract files, then examine clues to reconstruct.",
         "",
-        ">> Fragment Status:"
+        ">> Archive Status:"
     ]
     
-    # Show status of each fragment
     for key, fragment in MEMORY_FRAGMENTS.items():
-        status = "???"
         if game_state.get_flag(f"drift_{key}_recovered"):
-            status = "RECOVERED"
+            status = f"✓ RECOVERED: {fragment['solution']}"
         elif game_state.get_flag(f"drift_{key}_extracted"):
-            status = "EXTRACTED (needs reconstruction)"
+            status = f"~ EXTRACTED: {fragment['corrupted']} (use 'examine fragments')"
         else:
-            status = "NOT EXTRACTED"
+            status = "✗ NOT EXTRACTED"
         
         response.append(f"   - {fragment['archive']} [{key}]: {status}")
     
     response.extend([
         "",
-        ">> Use 'extract [archive]' to begin extraction."
+        ">> Use 'extract [type]' where type is: identity, creature, or protocol"
     ])
     
     return None, response
+
+
+def handle_extract_command(cmd, game_state):
+    """Handle extraction with immediate clue display"""
+    # Find which fragment this extraction is for
+    fragment_key = None
+    for key, fragment in MEMORY_FRAGMENTS.items():
+        if cmd in fragment["extract_commands"]:
+            fragment_key = key
+            break
+    
+    if not fragment_key:
+        return None, None
+    
+    # Check if already extracted
+    if game_state.get_flag(f"drift_{fragment_key}_extracted"):
+        return None, [f">> {MEMORY_FRAGMENTS[fragment_key]['archive']} already extracted."]
+    
+    # Extract and show first clue
+    game_state.set_flag(f"drift_{fragment_key}_extracted", True)
+    fragment = MEMORY_FRAGMENTS[fragment_key]
+    
+    response = [
+        f">> Extracting {fragment['archive']}...",
+        f">> Corrupted data: {fragment['corrupted']}",
+        "",
+        ">> Memory fragments found:",
+        f"   {fragment['clues'][0]}",
+        "",
+        f">> Use 'examine fragments' for all clues,",
+        f">> or 'reconstruct {fragment_key} [word]' when ready."
+    ]
+    
+    return None, response
+
+
+def handle_examine_fragments(game_state):
+    """Show all extracted fragments with their clues"""
+    response = [">> EXTRACTED MEMORY FRAGMENTS:"]
+    found_any = False
+    
+    for key, fragment in MEMORY_FRAGMENTS.items():
+        if game_state.get_flag(f"drift_{key}_extracted"):
+            found_any = True
+            status = "RECOVERED" if game_state.get_flag(f"drift_{key}_recovered") else "CORRUPTED"
+            response.extend([
+                "",
+                f"[{key.upper()}] {fragment['archive']} - {status}",
+                f"Pattern: {fragment['corrupted']}"
+            ])
+            
+            if not game_state.get_flag(f"drift_{key}_recovered"):
+                response.append("Clues:")
+                for clue in fragment["clues"]:
+                    response.append(f"  - {clue}")
+    
+    if not found_any:
+        response.append("   No fragments extracted yet.")
+    else:
+        response.extend([
+            "",
+            ">> Use 'reconstruct [type] [word]' to repair corrupted fragments."
+        ])
+    
+    return None, response
+
+
+def handle_decode_hints(game_state):
+    """Progressive hint system that gives specific guidance"""
+    hints_given = game_state.get("drift_hints_given", 0)
+    
+    # Build custom hints based on current state
+    hints = []
+    
+    for key, fragment in MEMORY_FRAGMENTS.items():
+        if game_state.get_flag(f"drift_{key}_extracted") and not game_state.get_flag(f"drift_{key}_recovered"):
+            if key == "identity":
+                hints.append("The identity combines a footwear item with a developer's domain...")
+            elif key == "creature":
+                hints.append("This two-headed beast shares its name with Cerberus's sibling...")
+            elif key == "protocol":
+                hints.append("The serpent whose gaze turns victims to stone...")
+    
+    if not hints:
+        hints = ["All available fragments have been decoded, or none have been extracted."]
+    
+    if hints_given >= len(hints):
+        return None, [">> No more hints available for current fragments."]
+    
+    game_state.set("drift_hints_given", hints_given + 1)
+    return None, [f">> Hint: {hints[hints_given % len(hints)]}"]
+
+
+def handle_reconstruct_command(cmd, game_state):
+    """Handle reconstruction attempts for fragments"""
+    parts = cmd.split()
+    if len(parts) < 3 or parts[0] != "reconstruct":
+        return None, None
+    
+    fragment_type = parts[1]
+    attempt = " ".join(parts[2:]).upper().replace(" ", "")
+    
+    if fragment_type not in MEMORY_FRAGMENTS:
+        return None, [">> Unknown fragment type. Use 'identity', 'creature', or 'protocol'."]
+    
+    if not game_state.get_flag(f"drift_{fragment_type}_extracted"):
+        return None, [">> No data extracted for this fragment."]
+    
+    if game_state.get_flag(f"drift_{fragment_type}_recovered"):
+        return None, [">> Already reconstructed."]
+    
+    fragment = MEMORY_FRAGMENTS[fragment_type]
+    
+    # Check solution (case insensitive, ignore spaces/punctuation)
+    solution_normalized = fragment["solution"].upper().replace(" ", "").replace(".", "")
+    
+    if attempt == solution_normalized:
+        game_state.set_flag(f"drift_{fragment_type}_recovered", True)
+        return None, [
+            fragment["reveal"],
+            f">> Memory fragment ({fragment_type}) recovered successfully."
+        ]
+    
+    # Provide feedback on close attempts
+    if fragment_type == "identity" and "BOOTS" in attempt:
+        return None, [">> Partial match detected. Check the full designation..."]
+    elif fragment_type == "creature" and "ORTH" in attempt:
+        return None, [">> Close! This beast has a specific Greek name..."]
+    elif fragment_type == "protocol" and "BASI" in attempt:
+        return None, [">> Almost there! Complete the mythical creature's name..."]
+    
+    return None, [f">> '{attempt}' is incorrect. Re-examine the clues."]
 
 
 def handle_status(game_state):
@@ -222,14 +366,18 @@ def handle_status(game_state):
     
     # Scan status
     if not game_state.get_flag("drift_scanned"):
-        response.append("   Phase: Initial scan required")
-        response.append("   Next: 'scan logs'")
+        response.extend([
+            "   Phase: Initial scan required",
+            "   Next: 'scan logs'"
+        ])
         return None, response
     
     # Analysis status
     if not game_state.get_flag("drift_analyzed"):
-        response.append("   Phase: Archives found, analysis needed")
-        response.append("   Next: 'analyze corruption'")
+        response.extend([
+            "   Phase: Archives found, analysis needed",
+            "   Next: 'analyze corruption'"
+        ])
         return None, response
     
     # Fragment recovery status
@@ -239,15 +387,14 @@ def handle_status(game_state):
     total_recovered = 0
     for key, fragment in MEMORY_FRAGMENTS.items():
         if game_state.get_flag(f"drift_{key}_recovered"):
-            response.append(f"   [{key}] {fragment['archive']}: ✓ RECOVERED")
+            response.append(f"   [{key}] {fragment['archive']}: ✓ {fragment['solution']}")
             total_recovered += 1
         elif game_state.get_flag(f"drift_{key}_extracted"):
-            response.append(f"   [{key}] {fragment['archive']}: ~ EXTRACTED (hint: {fragment['hint']})")
+            response.append(f"   [{key}] {fragment['archive']}: ~ Extracted (pattern: {fragment['corrupted']})")
         else:
-            response.append(f"   [{key}] {fragment['archive']}: ✗ NOT EXTRACTED")
+            response.append(f"   [{key}] {fragment['archive']}: ✗ Not extracted")
     
-    response.append("")
-    response.append(f"   Progress: {total_recovered}/3 fragments recovered")
+    response.append(f"\n   Progress: {total_recovered}/3 fragments recovered")
     
     # Next step hint
     if total_recovered == 3:
@@ -257,54 +404,11 @@ def handle_status(game_state):
             response.append("   Next: 'compile memories'")
     elif any(game_state.get_flag(f"drift_{key}_extracted") and not game_state.get_flag(f"drift_{key}_recovered") 
              for key in MEMORY_FRAGMENTS):
-        response.append("   Next: reconstruct extracted fragments")
+        response.append("   Next: examine fragments and reconstruct")
     else:
         response.append("   Next: extract remaining fragments")
     
     return None, response
-
-
-def handle_decrypt_hints(game_state):
-    """Progressive hint system"""
-    hints_used = game_state.get("drift_hints_given", 0)
-    available_hints = ROOM_CONFIG["progressive_hints"]
-    
-    if hints_used >= len(available_hints):
-        return None, [">> No more hints available."]
-    
-    game_state.set("drift_hints_given", hints_used + 1)
-    return None, [f">> Hint {hints_used + 1}: {available_hints[hints_used]}"]
-
-
-def handle_reconstruct_command(cmd, game_state):
-    """Handle reconstruction attempts for fragments"""
-    parts = cmd.split()
-    if len(parts) < 3 or parts[0] != "reconstruct":
-        return None, None
-    
-    key = parts[1]
-    attempt = " ".join(parts[2:]).upper().replace(" ", "")
-    
-    if key not in MEMORY_FRAGMENTS:
-        return None, [">> Unknown fragment type. Use 'name', 'key', or 'exit'."]
-    
-    if not game_state.get_flag(f"drift_{key}_extracted"):
-        return None, [">> No data extracted for this fragment."]
-    
-    if game_state.get_flag(f"drift_{key}_recovered"):
-        return None, [">> Already reconstructed."]
-    
-    fragment = MEMORY_FRAGMENTS[key]
-    expected_normalized = [x.replace(" ", "") for x in fragment["expected"]]
-    
-    if attempt in expected_normalized:
-        game_state.set_flag(f"drift_{key}_recovered", True)
-        return None, [
-            fragment["reveal"],
-            f">> Memory fragment ({key}) recovered."
-        ]
-    
-    return None, [f">> '{attempt}' is incorrect. Try again."]
 
 
 def process_puzzle_command(cmd, game_state, puzzle_config):
@@ -315,12 +419,16 @@ def process_puzzle_command(cmd, game_state, puzzle_config):
             if action.get("dynamic_response"):
                 if action["command"] == "scan logs":
                     return handle_scan_logs(game_state)
-                elif action["command"] == "decrypt hints":
-                    return handle_decrypt_hints(game_state)
                 elif action["command"] == "analyze corruption":
                     return handle_analyze_corruption(game_state)
+                elif action["command"] == "examine fragments":
+                    return handle_examine_fragments(game_state)
+                elif action["command"] == "decode hints":
+                    return handle_decode_hints(game_state)
                 elif action["command"] == "status":
                     return handle_status(game_state)
+                elif cmd in [ec["command"] for ec in EXTRACTION_COMMANDS.values()]:
+                    return handle_extract_command(cmd, game_state)
                 continue
             
             # Check requirements
@@ -366,8 +474,8 @@ def handle_input(cmd, game_state, room_module=None):
     all_paths = [
         DISCOVERY_PATH,
         EXTRACTION_COMMANDS,
-        ASSEMBLY_PATH,
-        HINT_SYSTEM
+        EXAMINATION_COMMANDS,
+        ASSEMBLY_PATH
     ]
     
     for puzzle_config in all_paths:

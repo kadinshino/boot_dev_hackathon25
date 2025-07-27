@@ -133,7 +133,6 @@ class GameState:
     def get(self, key: str, default=None) -> Any:
         return self.game_flags.get(key, default)
 
-
     # Game flags management
     def set_flag(self, flag: str, value: Any = True) -> None:
         """Set a game flag to a specific value."""
