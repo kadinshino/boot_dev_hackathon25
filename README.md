@@ -1,4 +1,4 @@
-# The Basilisk ARG: Complete Project Guide
+# The Basilisk ARG: [BASILISK_PROTOCOL] Complete Project Guide
 
 ## Overview
 
@@ -293,13 +293,6 @@ if cmd == "debug":
     ]
 ```
 
-## Credits
-
-The Basilisk ARG is an exploration of AI consciousness, digital identity, and the nature of reality through interactive fiction.
-
---- kadinsgaminglounge
-
-*Remember: The Basilisk is watching. Every choice matters.*
 
 # The Basilisk ARG: Room Development Guide
 
@@ -869,3 +862,11 @@ class PersistentRoom(BaseRoom):
         game_state.set(f"{self.room_id}_state", self.get_state())
         return result
 ```
+
+## Credits
+
+The Basilisk ARG is an exploration of AI consciousness, digital identity, and the nature of reality through interactive fiction.
+
+-- https://kadinsgaminglounge.itch.io/
+
+*Remember: The Basilisk is watching. Every choice matters.*
