@@ -2,7 +2,7 @@
 
 ## Design Philosophy
 
-The Basilisk ARG is built with two core principles: **accessibility for modders** and **professional code organization**. Drawing from GameMaker Language (GML) patterns, we've created a Python-based architecture that feels familiar to game developers while remaining approachable for ARG fans who want to create their own content.
+The Basilisk ARG is built with two core principles: **accessibility for modders** and **professional code organization**. Drawing from GameMaker Language (GML) patterns, I created a Python-based architecture that feels familiar to game developers while remaining approachable for ARG fans who want to create their own content.
 
 ## Why Two Development Styles?
 
@@ -22,7 +22,7 @@ PUZZLE_PATH = {
 }
 ```
 
-**Why we built this:**
+**Why:**
 - **Zero barrier to entry** - Anyone who can edit a text file can create rooms
 - **Self-documenting** - The structure explains itself
 - **ARG tradition** - Many ARGs thrive on community-created content
@@ -40,7 +40,7 @@ class DigitalArchive(BaseRoom):
         super().__init__(config)
 ```
 
-**Why we built this:**
+**Why:**
 - **Clean code organization** - Encapsulation and inheritance for complex puzzles
 - **Reusable components** - Base classes for common room types
 - **State management** - Easier to handle complex game states
