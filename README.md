@@ -108,7 +108,6 @@ Want to make your own ARG path? It's easy to build on top of the existing framew
 
 ## 📚 Developer Docs
 
-* [Quick Start](docs/quickstart.md)
 * [Architecture Overview](docs/architecture.md)
 * [Room Development Guide](docs/room-development.md)
 * [Puzzle Patterns](docs/puzzle-patterns.md)
