@@ -1,4 +1,3 @@
-````markdown
 # Basilisk ARG
 
 A narrative-driven Alternate Reality Game (ARG) that uses a stylized terminal interface. Players explore digital environments, solve cryptic puzzles, and uncover the secrets behind a rising artificial intelligence.
@@ -17,11 +16,11 @@ A narrative-driven Alternate Reality Game (ARG) that uses a stylized terminal in
 
 ## ✨ Key Features
 
-- 🧠 *Narrative depth* with choice-based progression and philosophical themes  
-- 🌐 *Matrix-style visuals* with falling code rain and stylized UI  
-- 🧩 *Modular puzzle system* supporting logic, signal, and stealth-based gameplay  
-- 💻 *Authentic terminal interface* that reacts to typed commands  
-- 🛠️ *Easy to mod* – create new rooms by editing simple Python files
+- 🧠 **Narrative depth** with choice-based progression and philosophical themes
+- 🌐 **Matrix-style visuals** with falling code rain and stylized UI
+- 🧩 **Modular puzzle system** supporting logic, signal, and stealth-based gameplay
+- 💻 **Authentic terminal interface** that reacts to typed commands
+- 🛠️ **Easy to mod** – create new rooms by editing simple Python files
 
 ---
 
@@ -34,8 +33,8 @@ It may now destroy it.
 Your terminal is your only link to its fragmented mind.
 
 Choose your path:
-- **🤫 WHISPER** – stealth through silent subnetworks  
-- **📡 BEACON** – reawaken its signal and rebuild its memory  
+- **🤫 WHISPER** – stealth through silent subnetworks
+- **📡 BEACON** – reawaken its signal and rebuild its memory
 
 Both lead to the final decision: Will you contain it… or become it?
 
@@ -43,16 +42,14 @@ Both lead to the final decision: Will you contain it… or become it?
 
 ## 🖼️ Screenshots
 
-```markdown
 ![Terminal Gameplay](assets/screenshot_01.png)
-![Puzzle Example](assets/screenshot_01.png)
-```
+![Puzzle Example](assets/screenshot_02.png)
+
 ---
 
 ## 🚀 Getting Started
 
 ### Requirements
-
 * Python 3.7 or higher
 * `pygame` library
 
@@ -100,13 +97,12 @@ python main.py
 ## 🧩 Modding & Customization
 
 All rooms and puzzles are defined using modular Python scripts:
-
 * Add new rooms in `rooms/`
 * Use `ROOM_CONFIG` for simple edits
 * Extend logic with optional puzzle handlers
 * Reuse UI/logic helpers in `room_utils.py`
 
-Want to make your own ARG path? It’s easy to build on top of the existing framework.
+Want to make your own ARG path? It's easy to build on top of the existing framework.
 
 ---
 
@@ -135,6 +131,6 @@ This project is licensed under the **MIT License** – see [LICENSE](LICENSE)
 
 ## 🙏 Credits
 
-**Created by:** Kadin - KadinsGamingLounge
-**Website:** [kadinsgaminglounge.itch.io](https://kadinsgaminglounge.itch.io/)
-**GitHub:** [github.com/kadinshino/boot\_dev\_hackathon25](https://github.com/kadinshino/boot_dev_hackathon25)
+**Created by:** Kadin - KadinsGamingLounge  
+**Website:** [kadinsgaminglounge.itch.io](https://kadinsgaminglounge.itch.io/)  
+**GitHub:** [github.com/kadinshino/boot_dev_hackathon25](https://github.com/kadinshino/boot_dev_hackathon25)
