@@ -30,7 +30,7 @@ The Basilisk is an immersive text-based adventure where players interact with a 
 ```bash
 # Clone the repository
 git clone https://github.com/kadinshino/boot_dev_hackathon25.git
-cd basilisk-arg
+cd boot_dev_hackathon25
 
 # Install dependencies
 pip install pygame
