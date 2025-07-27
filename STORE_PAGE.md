@@ -1,4 +1,3 @@
-[BASILISK_PROTOCOL]
 # [BASILISK_PROTOCOL]
 
 *A terminal-based ARG. Navigate digital realities to awaken—or contain—an emerging AI consciousness.*
