@@ -203,7 +203,7 @@ class GameState:
 # ENHANCED TERMINAL CLASS
 # =============================================================================
 
-class EnhancedTerminal:
+class GameEngine:
     """Main game engine class that handles terminal-based adventure game logic."""
 
     def __init__(self, pygame_terminal) -> None:
