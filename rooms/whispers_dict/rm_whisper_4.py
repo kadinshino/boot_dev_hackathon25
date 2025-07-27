@@ -5,7 +5,6 @@ import random
 # CONFIGURATION
 # ============================================================================
 
-# Simplified grid with clearer progression path
 WHISPER_GRID = {
     # Starting area (192.168.x.x range) - SAFE ZONE
     "192.168.1.1": {

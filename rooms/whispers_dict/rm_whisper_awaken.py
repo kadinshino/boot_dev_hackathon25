@@ -1,5 +1,3 @@
-# rooms/rm_awakening_exit_unlocked.py
-
 from resources.room_utils import format_enter_lines, standard_commands, transition_to_room
 import random
 

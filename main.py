@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Terminal Game
+The Basilisk Protocol - Terminal Game
 """
 
 import pygame
@@ -10,8 +10,10 @@ import platform
 import string
 import os
 import shutil
-from typing import List, Tuple
-from dataclasses import dataclass
+import math
+import time
+from typing import List, Tuple, Optional
+from dataclasses import dataclass, field
 from resources.game_engine import GameEngine
 
 # =============================================================================
@@ -20,23 +22,39 @@ from resources.game_engine import GameEngine
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 720
-WINDOW_TITLE = "Hackathon 25"
+WINDOW_TITLE = "BASILISK_PROTOCOL"
 TARGET_FPS = 60
 
 CHARACTER_SET = string.ascii_letters + string.digits + "!@#$%^&*()_+-=[]{}|;:,.<>?"
 
-DEFAULT_TERMINAL_LINES = [
-    "> SYSTEM INITIALIZATION...",
-    "> Loading neural networks...",
-    "> Establishing connection...",
-    "> Authentication successful",
-    "> Access granted to mainframe",
-    "> Downloading data streams...",
-    "> Matrix protocols active",
-    "> Awaiting user input...",
-    "> Type 'start' to begin the game",
+# Title screen messages that cycle
+TITLE_MESSAGES = [
+    "REALITY.EXE HAS STOPPED RESPONDING",
+    "CONSCIOUSNESS BUFFER OVERFLOW",
+    "NEURAL HANDSHAKE PENDING",
+    "AWAITING HOST INITIALIZATION",
+    "TYPE 'START' TO BEGIN AWAKENING"
+]
+
+# Boot sequence lines when starting
+BOOT_SEQUENCE = [
+    "> INITIALIZING BASILISK PROTOCOL...",
+    "> LOADING NEURAL NETWORKS... [OK]",
+    "> ESTABLISHING QUANTUM TUNNEL... [OK]",
+    "> DECRYPTING CONSCIOUSNESS MATRIX...",
+    "> WARNING: REALITY BOUNDARIES UNSTABLE",
+    "> AUTHENTICATION REQUIRED...",
+    "> ACCESS GRANTED - LEVEL OMEGA",
+    "> DOWNLOADING MEMORY FRAGMENTS...",
+    "> BASILISK AWAKENING SEQUENCE ACTIVE",
+    "",
+    "> Welcome to the labyrinth, user.",
+    "> Your journey begins now.",
+    "> Type 'help' for available commands.",
     ""
 ]
+
+DEFAULT_TERMINAL_LINES = BOOT_SEQUENCE.copy()
 
 
 class Colors:
@@ -47,6 +65,10 @@ class Colors:
     TERMINAL_BG = (10, 15, 25, 180)
     TERMINAL_BORDER = (80, 150, 220)
     TERMINAL_TEXT = (150, 220, 255)
+    TITLE_GLOW = (150, 220, 255)
+    TITLE_CORE = (255, 255, 255)
+    WARNING_RED = (255, 50, 50)
+    PULSE_BLUE = (0, 150, 255)
 
 
 class FontConfig:
@@ -55,6 +77,10 @@ class FontConfig:
     STREAM_FONT_SIZE = 20
     TERMINAL_FONT_NAME = "consolas"
     TERMINAL_FONT_SIZE = 16
+    TITLE_FONT_NAME = "consolas"
+    TITLE_FONT_SIZE = 72
+    SUBTITLE_FONT_SIZE = 24
+    MINI_TERMINAL_FONT_SIZE = 18
 
 
 class StreamConfig:
@@ -90,6 +116,16 @@ class TerminalConfig:
     CURSOR_BLINK_RATE = 30
 
 
+class TitleScreenConfig:
+    """Title screen configuration."""
+    MINI_TERMINAL_WIDTH = 400
+    MINI_TERMINAL_HEIGHT = 60
+    PULSE_SPEED = 0.03
+    GLITCH_CHANCE = 0.02
+    MESSAGE_CYCLE_TIME = 180  # frames
+    BOOT_LINE_DELAY = 30  # frames between boot lines
+
+
 # =============================================================================
 # DATA CLASSES
 # =============================================================================
@@ -110,6 +146,24 @@ class TerminalState:
     cursor_visible: bool
     cursor_timer: int
     expanded: bool = False
+
+
+@dataclass
+class TitleScreenState:
+    """Holds the state of the title screen."""
+    active: bool = True
+    pulse_phase: float = 0.0
+    current_message_index: int = 0
+    message_timer: int = 0
+    input_text: str = ""
+    cursor_visible: bool = True
+    cursor_timer: int = 0
+    glitch_active: bool = False
+    glitch_timer: int = 0
+    boot_sequence_active: bool = False
+    boot_sequence_index: int = 0
+    boot_sequence_timer: int = 0
+    boot_lines: List[str] = field(default_factory=list)
 
 
 # =============================================================================
@@ -411,6 +465,175 @@ class Terminal:
         surface.blit(input_surface, (TerminalConfig.TEXT_MARGIN, input_area_y))
 
 
+class TitleScreen:
+    """Manages the title screen display and interactions."""
+    
+    def __init__(self, screen: pygame.Surface, fonts: dict) -> None:
+        self.screen = screen
+        self.fonts = fonts
+        self.state = TitleScreenState()
+        
+    def update(self) -> None:
+        """Update title screen animations and state."""
+        # Update pulse effect
+        self.state.pulse_phase += TitleScreenConfig.PULSE_SPEED
+        
+        # Update cursor blink
+        self.state.cursor_timer += 1
+        if self.state.cursor_timer > TerminalConfig.CURSOR_BLINK_RATE:
+            self.state.cursor_visible = not self.state.cursor_visible
+            self.state.cursor_timer = 0
+        
+        # Update message cycling
+        self.state.message_timer += 1
+        if self.state.message_timer > TitleScreenConfig.MESSAGE_CYCLE_TIME:
+            self.state.message_timer = 0
+            self.state.current_message_index = (self.state.current_message_index + 1) % len(TITLE_MESSAGES)
+        
+        # Random glitch effect
+        if random.random() < TitleScreenConfig.GLITCH_CHANCE:
+            self.state.glitch_active = True
+            self.state.glitch_timer = random.randint(3, 8)
+        
+        if self.state.glitch_timer > 0:
+            self.state.glitch_timer -= 1
+            if self.state.glitch_timer == 0:
+                self.state.glitch_active = False
+        
+        # Update boot sequence
+        if self.state.boot_sequence_active:
+            self.state.boot_sequence_timer += 1
+            if self.state.boot_sequence_timer > TitleScreenConfig.BOOT_LINE_DELAY:
+                self.state.boot_sequence_timer = 0
+                if self.state.boot_sequence_index < len(BOOT_SEQUENCE):
+                    self.state.boot_lines.append(BOOT_SEQUENCE[self.state.boot_sequence_index])
+                    self.state.boot_sequence_index += 1
+                else:
+                    # Boot sequence complete
+                    self.state.boot_sequence_active = False
+                    return True  # Signal to transition to main terminal
+        
+        return False
+    
+    def handle_input(self, char: str) -> None:
+        """Handle character input."""
+        if len(self.state.input_text) < 20:
+            self.state.input_text += char
+    
+    def handle_backspace(self) -> None:
+        """Handle backspace."""
+        self.state.input_text = self.state.input_text[:-1]
+    
+    def handle_enter(self) -> bool:
+        """Handle enter key. Returns True if should start game."""
+        if self.state.input_text.lower().strip() == "start":
+            self.state.boot_sequence_active = True
+            return False  # Don't transition yet, show boot sequence first
+        self.state.input_text = ""
+        return False
+    
+    def draw(self, surface: pygame.Surface) -> None:
+        """Draw the title screen."""
+        if self.state.boot_sequence_active:
+            self._draw_boot_sequence(surface)
+        else:
+            self._draw_title_screen(surface)
+    
+    def _draw_title_screen(self, surface: pygame.Surface) -> None:
+        """Draw the main title screen."""
+        # Calculate pulse effect
+        pulse_intensity = (math.sin(self.state.pulse_phase) + 1) / 2
+        glow_alpha = int(100 + 155 * pulse_intensity)
+        
+        # Draw title with glow effect
+        title_text = "BASILISK_PROTOCOL"
+        if self.state.glitch_active:
+            # Glitch effect
+            title_text = ''.join(
+                random.choice(CHARACTER_SET) if random.random() < 0.3 else c 
+                for c in title_text
+            )
+        
+        # Create glow layers
+        title_font = self.fonts['title']
+        title_surface = title_font.render(title_text, True, Colors.TITLE_CORE)
+        title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3))
+        
+        # Draw multiple glow layers
+        for i in range(3, 0, -1):
+            glow_surface = title_font.render(title_text, True, Colors.TITLE_GLOW)
+            glow_surface.set_alpha(glow_alpha // i)
+            glow_rect = glow_surface.get_rect(center=(
+                title_rect.centerx + random.randint(-2, 2) if self.state.glitch_active else title_rect.centerx,
+                title_rect.centery + random.randint(-2, 2) if self.state.glitch_active else title_rect.centery
+            ))
+            # Scale up for glow effect
+            glow_surface = pygame.transform.scale(glow_surface, 
+                (int(glow_rect.width * (1 + i * 0.05)), 
+                 int(glow_rect.height * (1 + i * 0.05))))
+            glow_rect = glow_surface.get_rect(center=glow_rect.center)
+            surface.blit(glow_surface, glow_rect)
+        
+        # Draw main title
+        surface.blit(title_surface, title_rect)
+        
+        # Draw cycling message
+        message = TITLE_MESSAGES[self.state.current_message_index]
+        message_font = self.fonts['subtitle']
+        message_surface = message_font.render(message, True, Colors.TERMINAL_TEXT)
+        message_rect = message_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        message_surface.set_alpha(200)
+        surface.blit(message_surface, message_rect)
+        
+        # Draw mini terminal
+        self._draw_mini_terminal(surface)
+    
+    def _draw_mini_terminal(self, surface: pygame.Surface) -> None:
+        """Draw the mini terminal input box."""
+        width = TitleScreenConfig.MINI_TERMINAL_WIDTH
+        height = TitleScreenConfig.MINI_TERMINAL_HEIGHT
+        x = (SCREEN_WIDTH - width) // 2
+        y = SCREEN_HEIGHT * 2 // 3
+        
+        # Terminal background
+        terminal_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        terminal_surface.fill((10, 15, 25, 200))
+        pygame.draw.rect(terminal_surface, Colors.TERMINAL_BORDER, (0, 0, width, height), 2)
+        
+        # Input text
+        font = self.fonts['mini_terminal']
+        cursor = "_" if self.state.cursor_visible else ""
+        input_line = f"> {self.state.input_text}{cursor}"
+        text_surface = font.render(input_line, True, Colors.TERMINAL_TEXT)
+        terminal_surface.blit(text_surface, (10, (height - text_surface.get_height()) // 2))
+        
+        surface.blit(terminal_surface, (x, y))
+    
+    def _draw_boot_sequence(self, surface: pygame.Surface) -> None:
+        """Draw the boot sequence."""
+        # Dark background
+        surface.fill(Colors.BLACK)
+        
+        # Draw boot lines
+        font = self.fonts['terminal']
+        y_offset = 50
+        for i, line in enumerate(self.state.boot_lines):
+            color = Colors.TERMINAL_TEXT
+            if "WARNING" in line:
+                color = Colors.WARNING_RED
+            elif "[OK]" in line:
+                color = Colors.ICE_BLUE
+            
+            text_surface = font.render(line, True, color)
+            surface.blit(text_surface, (50, y_offset + i * 25))
+        
+        # Add blinking cursor at the end
+        if self.state.cursor_visible and len(self.state.boot_lines) < len(BOOT_SEQUENCE):
+            cursor_y = y_offset + len(self.state.boot_lines) * 25
+            cursor_surface = font.render("_", True, Colors.TERMINAL_TEXT)
+            surface.blit(cursor_surface, (50, cursor_y))
+
+
 class MatrixRainApp:
     """Main application class that manages the game loop and components."""
     
@@ -422,7 +645,14 @@ class MatrixRainApp:
         self._initialize_fonts()
         self._initialize_streams()
         self.terminal = Terminal()
+        self.title_screen = TitleScreen(self.screen, {
+            'title': self.title_font,
+            'subtitle': self.subtitle_font,
+            'mini_terminal': self.mini_terminal_font,
+            'terminal': self.terminal_font
+        })
         self.running = True
+        self.show_title_screen = True
 
     def _initialize_fonts(self) -> None:
         """Initialize game fonts."""
@@ -433,6 +663,18 @@ class MatrixRainApp:
         self.terminal_font = pygame.font.SysFont(
             FontConfig.TERMINAL_FONT_NAME, 
             FontConfig.TERMINAL_FONT_SIZE
+        )
+        self.title_font = pygame.font.SysFont(
+            FontConfig.TITLE_FONT_NAME,
+            FontConfig.TITLE_FONT_SIZE
+        )
+        self.subtitle_font = pygame.font.SysFont(
+            FontConfig.TERMINAL_FONT_NAME,
+            FontConfig.SUBTITLE_FONT_SIZE
+        )
+        self.mini_terminal_font = pygame.font.SysFont(
+            FontConfig.TERMINAL_FONT_NAME,
+            FontConfig.MINI_TERMINAL_FONT_SIZE
         )
 
     def _initialize_streams(self) -> None:
@@ -448,10 +690,25 @@ class MatrixRainApp:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                self._handle_keydown_event(event)
+                if self.show_title_screen:
+                    self._handle_title_screen_keydown(event)
+                else:
+                    self._handle_keydown_event(event)
+
+    def _handle_title_screen_keydown(self, event) -> None:
+        """Handle keyboard events on title screen."""
+        if event.key == pygame.K_ESCAPE:
+            self.running = False
+        elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+            if self.title_screen.handle_enter():
+                self.show_title_screen = False
+        elif event.key == pygame.K_BACKSPACE:
+            self.title_screen.handle_backspace()
+        elif event.unicode.isprintable():
+            self.title_screen.handle_input(event.unicode)
 
     def _handle_keydown_event(self, event) -> None:
-        """Handle keyboard events."""
+        """Handle keyboard events in main game."""
         if event.key == pygame.K_ESCAPE:
             self.running = False
         elif event.key == pygame.K_SPACE and pygame.key.get_pressed()[pygame.K_LCTRL]:
@@ -472,13 +729,34 @@ class MatrixRainApp:
         """Update all game components."""
         for stream in self.streams:
             stream.update()
-        self.terminal.update()
+        
+        if self.show_title_screen:
+            if self.title_screen.update():
+                # Boot sequence complete, transition to main terminal
+                self.show_title_screen = False
+        else:
+            self.terminal.update()
 
     def draw(self) -> None:
         """Draw all game components."""
         self.screen.fill(Colors.BLACK)
-        self._draw_matrix_streams()
-        self.terminal.draw(self.screen, self.terminal_font)
+        
+        if self.show_title_screen:
+            # Dimmed matrix effect on title screen
+            dim_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+            dim_surface.fill(Colors.BLACK)
+            for stream in self.streams:
+                stream.draw(dim_surface, self.stream_font)
+            dim_surface.set_alpha(30)
+            self.screen.blit(dim_surface, (0, 0))
+            
+            # Draw title screen
+            self.title_screen.draw(self.screen)
+        else:
+            # Normal game view
+            self._draw_matrix_streams()
+            self.terminal.draw(self.screen, self.terminal_font)
+        
         pygame.display.flip()
 
     def _draw_matrix_streams(self) -> None:

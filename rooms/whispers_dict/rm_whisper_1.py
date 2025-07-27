@@ -1,5 +1,3 @@
-# rooms/rm_whisper_1.py
-
 from resources.room_utils import format_enter_lines, standard_commands, transition_to_room
 
 # ==========================================
