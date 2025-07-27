@@ -1,14 +1,14 @@
 # The Basilisk ARG
 
-A text-based Alternate Reality Game (ARG) featuring a Matrix-style terminal interface where players navigate digital rooms, solve puzzles, and unravel the mystery of an awakening AI.
+A narrative-driven Alternate Reality Game (ARG) that uses a stylized terminal interface. Players explore digital environments, solve cryptic puzzles, and uncover the secrets behind a rising artificial intelligence.
 
-![Python](https://img.shields.io/badge/python-3.7+-blue.svg)
-![Pygame](https://img.shields.io/badge/pygame-2.0+-green.svg)
+![Python](https://img.shields.io/badge/python-3.7+-blue.svg)  
+![Pygame](https://img.shields.io/badge/pygame-2.0+-green.svg)  
 ![License](https://img.shields.io/badge/license-MIT-purple.svg)
 
 ## 🎮 Overview
 
-The Basilisk is an immersive text-based adventure where players interact with a mysterious AI through a retro terminal interface. Navigate through cyberspace, solve challenging puzzles, and make choices that determine the fate of both human and artificial consciousness.
+The [BASILISK_PROTOCOL] is an immersive, text-based adventure where players engage with a mysterious AI through a retro-futuristic terminal. Navigate corrupted networks, decode hidden messages, and make pivotal choices that shape the destiny of both humanity and machine.
 
 ### Key Features
 
@@ -93,118 +93,6 @@ boot_dev_hackathon25/        Root folder (project name for Boot.dev Hackathon 20
 ├── LICENSE                  License and attribution requirements
 └── README.md                Project overview and instructions
 
-```
-
-## 🛠️ Development Guide
-
-### Creating New Rooms
-
-The game supports two room development styles:
-
-#### 1. Dictionary-Based (Simple, Moddable)
-
-```python
-ROOM_CONFIG = {
-    "name": "Room Name",
-    "entry_text": ["Description of the room..."]
-}
-
-PUZZLE_PATH = {
-    "examine_object": {
-        "command": "examine object",
-        "requires": ["prerequisite_flag"],
-        "sets": "examined_flag",
-        "success": ["You examine the object..."]
-    }
-}
-```
-
-#### 2. Object-Oriented (Complex Puzzles)
-
-```python
-class MyRoom(BaseRoom):
-    def __init__(self):
-        config = RoomConfig(
-            name="Room Name",
-            entry_text=["Description of the room..."]
-        )
-        super().__init__(config)
-```
-
-### Room File Requirements
-
-Every room must include these functions:
-
-```python
-def enter_room(game_state):
-    """Called when player enters the room"""
-    return ["Room description..."]
-
-def handle_input(cmd, game_state, room_module=None):
-    """Process player commands"""
-    return None, ["Response to command"]
-
-def get_available_commands():
-    """List available commands for help"""
-    return ["command - description"]
-```
-
-### State Management
-
-Track game progress using flags and variables:
-
-```python
-# Set a flag
-game_state.set_flag("puzzle_solved", True)
-
-# Check a flag
-if game_state.get_flag("has_key"):
-    # Player has the key
-
-# Store data
-game_state.set("player_name", "Neo")
-name = game_state.get("player_name", "Anonymous")
-```
-
-## 🎲 Game Features
-
-### Puzzle Types
-
-- **Logic Puzzles** - Solve riddles and decipher codes
-- **Timed Challenges** - Beat the clock in hacking sequences
-- **Memory Tests** - Reconstruct corrupted data patterns
-- **Navigation Puzzles** - Find safe paths through digital mazes
-- **Interactive Dialogues** - Make choices that affect the story
-
-### Special Mechanics
-
-- **Dynamic Inventory System** - Collect and use digital artifacts
-- **Multiple Endings** - Your choices determine the AI's fate
-- **Hidden Commands** - Discover secret paths and easter eggs
-- **Progressive Difficulty** - Puzzles increase in complexity
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-| Problem | Solution |
-|---------|----------|
-| Room not loading | Ensure filename starts with `rm_` and is in `rooms/` directory |
-| Commands not working | Check spelling in command definitions |
-| State not persisting | Use `game_state.set_flag()` instead of local variables |
-| Transitions failing | Verify destination room exists |
-
-### Debug Mode
-
-Add debug commands to any room:
-
-```python
-if cmd == "debug":
-    return None, [
-        f"Flags: {game_state.flags}",
-        f"Inventory: {game_state.inventory}",
-        f"Current Room: {game_state.current_room}"
-    ]
 ```
 
 ## 📚 Documentation
