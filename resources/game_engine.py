@@ -43,7 +43,7 @@ class GameState:
         self._load_rooms()
 
     def _load_rooms(self) -> None:
-        """Load all room modules from the rooms directory."""
+        """Load all room modules from the rooms directory and subdirectories."""
         self._ensure_rooms_directory_exists()
         self._import_room_modules()
 
@@ -54,29 +54,53 @@ class GameState:
             print(f"Created {ROOMS_DIR} directory")
 
     def _import_room_modules(self) -> None:
-        """Import all Python files from the rooms directory as room modules."""
+        """Import all Python files from the rooms directory and subdirectories as room modules."""
         if not os.path.exists(ROOMS_DIR):
             return
 
-        for filename in os.listdir(ROOMS_DIR):
-            if self._is_valid_room_file(filename):
-                self._load_room_module(filename)
+        # Walk through the rooms directory and all subdirectories
+        for root, dirs, files in os.walk(ROOMS_DIR):
+            # Skip __pycache__ directories
+            dirs[:] = [d for d in dirs if not d.startswith('__')]
+            
+            for filename in files:
+                if self._is_valid_room_file(filename):
+                    self._load_room_module(root, filename)
 
     def _is_valid_room_file(self, filename: str) -> bool:
         """Check if filename is a valid room module file."""
         return filename.endswith(".py") and not filename.startswith("__")
 
-    def _load_room_module(self, filename: str) -> None:
-        """Load a single room module from filename."""
+    def _load_room_module(self, directory: str, filename: str) -> None:
+        """Load a single room module from directory and filename."""
         module_name = filename[:-3]  # Remove .py extension
         room_name = self._extract_room_name(module_name)
         
+        # Calculate the module path relative to the rooms directory
+        rel_path = os.path.relpath(directory, ROOMS_DIR)
+        if rel_path == ".":
+            # Room is directly in rooms directory
+            module_path = f"{ROOMS_DIR}.{module_name}"
+        else:
+            # Room is in a subdirectory
+            # Convert file path separators to dots for module import
+            subfolder_path = rel_path.replace(os.sep, ".")
+            module_path = f"{ROOMS_DIR}.{subfolder_path}.{module_name}"
+        
         try:
-            module = importlib.import_module(f"{ROOMS_DIR}.{module_name}")
+            module = importlib.import_module(module_path)
             self.rooms[room_name] = module
-            print(f"Loaded room: {room_name} (from {module_name}.py)")
+            
+            # Also register with subfolder prefix if in a subdirectory
+            if rel_path != ".":
+                # Create an alias with the subfolder name
+                subfolder_name = rel_path.split(os.sep)[0]
+                prefixed_name = f"{subfolder_name}_{room_name}"
+                self.rooms[prefixed_name] = module
+            
+            print(f"Loaded room: {room_name} (from {module_path})")
         except ImportError as e:
-            print(f"Failed to load room {module_name}: {e}")
+            print(f"Failed to load room {module_path}: {e}")
 
     def _extract_room_name(self, module_name: str) -> str:
         """Extract room name from module name (removes 'rm_' prefix if present)."""
@@ -154,6 +178,26 @@ class GameState:
             self.current_room = new_room
             return True
         return False
+
+    def list_rooms(self) -> List[str]:
+        """Return a list of all loaded room names."""
+        return list(self.rooms.keys())
+
+    def list_rooms_by_category(self) -> Dict[str, List[str]]:
+        """Return rooms organized by their subfolder categories."""
+        categories = {"root": []}
+        
+        for room_name in self.rooms.keys():
+            if "_" in room_name and not room_name.startswith("rm_"):
+                # This might be a prefixed room name
+                category, name = room_name.split("_", 1)
+                if category not in categories:
+                    categories[category] = []
+                categories[category].append(name)
+            else:
+                categories["root"].append(room_name)
+        
+        return categories
 
 # =============================================================================
 # ENHANCED TERMINAL CLASS

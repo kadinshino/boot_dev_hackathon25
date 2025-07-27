@@ -54,7 +54,6 @@ def standard_commands(cmd, game_state, room_module=None):
 
     return False, []
 
-
 def debug_room_state(game_state):
     return [
         f">> Current room: {game_state.current_room}",

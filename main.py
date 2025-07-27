@@ -12,7 +12,7 @@ import os
 import shutil
 from typing import List, Tuple
 from dataclasses import dataclass
-from resources.game_engine import EnhancedTerminal
+from resources.game_engine import GameEngine
 
 # =============================================================================
 # CONFIGURATION
@@ -274,7 +274,7 @@ class Terminal:
     def _handle_start_enhanced(self, command: str) -> None:
         """Start enhanced game mode."""
         if not self.game_engine:
-            self.game_engine = EnhancedTerminal(self)
+            self.game_engine = GameEngine(self)
         
         if not self.state.expanded:
             self.expand()
