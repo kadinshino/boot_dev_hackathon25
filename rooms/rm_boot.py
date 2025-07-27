@@ -14,7 +14,7 @@ from resources.room_utils import format_enter_lines
 # =============================
 PROTOCOL_FLAG = "protocol"
 PROTOCOL_CHOSEN_FLAG = "protocol_selected"
-VALID_PROTOCOLS = ["whisper", "beacon","system_hub"]
+VALID_PROTOCOLS = ["whisper", "beacon"]
 
 # =============================
 # Entry Point

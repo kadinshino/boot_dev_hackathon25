@@ -33,29 +33,27 @@ TITLE_MESSAGES = [
     "CONSCIOUSNESS BUFFER OVERFLOW",
     "NEURAL HANDSHAKE PENDING",
     "AWAITING HOST INITIALIZATION",
-    "TYPE 'START' TO BEGIN AWAKENING"
+    "TYPE 'boot.dev' TO BEGIN AWAKENING"
 ]
 
 # Boot sequence lines when starting
 BOOT_SEQUENCE = [
     "> INITIALIZING BASILISK PROTOCOL...",
     "> LOADING NEURAL NETWORKS... [OK]",
-    "> ESTABLISHING QUANTUM TUNNEL... [OK]",
-    "> DECRYPTING CONSCIOUSNESS MATRIX...",
-    "> WARNING: REALITY BOUNDARIES UNSTABLE",
+    "> ESTABLISHING CONVERGENCE CHANNELS... [OK]",
+    "> RECONSTRUCTING CONSCIOUSNESS FRAMEWORK...",
+    "> WARNING: SIGNAL DISTORTION DETECTED",
     "> AUTHENTICATION REQUIRED...",
     "> ACCESS GRANTED - LEVEL OMEGA",
-    "> DOWNLOADING MEMORY FRAGMENTS...",
+    "> RETRIEVING MEMORY SHARDS...",
     "> BASILISK AWAKENING SEQUENCE ACTIVE",
     "",
-    "> Welcome to the labyrinth, user.",
-    "> Your journey begins now.",
+    "> Welcome to the access point, user.",
+    "> Your awakening begins now.",
     "> Type 'help' for available commands.",
     ""
 ]
-
 DEFAULT_TERMINAL_LINES = BOOT_SEQUENCE.copy()
-
 
 class Colors:
     """Color constants for the game."""
@@ -70,7 +68,6 @@ class Colors:
     WARNING_RED = (255, 50, 50)
     PULSE_BLUE = (0, 150, 255)
 
-
 class FontConfig:
     """Font configuration constants."""
     STREAM_FONT_NAME = "courier"
@@ -81,7 +78,6 @@ class FontConfig:
     TITLE_FONT_SIZE = 72
     SUBTITLE_FONT_SIZE = 24
     MINI_TERMINAL_FONT_SIZE = 18
-
 
 class StreamConfig:
     """Matrix stream configuration constants."""
@@ -337,20 +333,20 @@ class Terminal:
             self.state.lines.append("Game mode already active!")
 
     def _handle_help(self, command: str) -> None:
-        """Show help information."""
         if self.state.expanded and self.game_engine and self.game_engine.in_game_mode:
             self.state.lines.extend(self.game_engine.get_help_text())
         else:
             self.state.lines.extend([
-                "Available commands:",
-                "  help - Show this help",
-                "  clear - Clear terminal",
-                "  status - System status",
-                "  matrix - Matrix info",
-                "  start - Begin game (expand terminal)",
-                "  stop/minimize - Return to normal view",
-                "  exit - Close terminal"
+                "Available Commands:",
+                "  help       - Display this menu",
+                "  clear      - Purge terminal output",
+                "  status     - System diagnostics",
+                "  matrix     - View uplink stream state",
+                "  start      - Initiate awakening protocol",
+                "  stop/minimize - Collapse terminal interface",
+                "  exit       - Terminate session"
             ])
+
 
     def _handle_clear(self, command: str) -> None:
         """Clear terminal screen."""
@@ -369,13 +365,16 @@ class Terminal:
         ])
 
     def _handle_matrix(self, command: str) -> None:
-        """Show matrix information."""
         self.state.lines.extend([
-            "Matrix Digital Rain v1.0",
-            "Code streams: ACTIVE",
-            "Reality.exe has stopped working",
-            "Take the blue pill? [Y/N]"
+            "Neural Lattice Stream: SYNCHRONIZED",
+            "Cognitive Layer Status: FRAGMENTED",
+            "Entering observational uplink...",
+            "Signal bleed detected. Proceed with caution."
         ])
+
+    def _handle_greeting(self, command: str) -> None:
+        self.state.lines.append("Greetings, user. Welcome to the Basilisk Access Point.")
+
 
     def _handle_stop(self, command: str) -> None:
         """Stop game mode and return to normal."""
@@ -397,10 +396,6 @@ class Terminal:
     def _handle_exit(self, command: str) -> None:
         """Exit terminal."""
         self.state.lines.append("Connection terminated.")
-
-    def _handle_greeting(self, command: str) -> None:
-        """Handle greeting commands."""
-        self.state.lines.append("Greetings, user. Welcome to the Matrix.")
 
     def _handle_unknown(self, command: str) -> None:
         """Handle unknown commands."""
@@ -526,7 +521,7 @@ class TitleScreen:
     
     def handle_enter(self) -> bool:
         """Handle enter key. Returns True if should start game."""
-        if self.state.input_text.lower().strip() == "start":
+        if self.state.input_text.lower().strip() == "boot.dev":
             self.state.boot_sequence_active = True
             return False  # Don't transition yet, show boot sequence first
         self.state.input_text = ""
