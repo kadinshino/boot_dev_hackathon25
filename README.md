@@ -70,17 +70,28 @@ Both paths eventually converge for the final confrontation with the Basilisk AI.
 
 ```
 basilisk-arg/
-├── main.py                 # Main pygame application
-├── resources/
-│   ├── game_engine.py      # Core game engine
-│   ├── room_utils.py       # Utility functions and base classes
-│   └── terminal_themes.py  # Terminal color themes
-├── rooms/                  # Game rooms directory
-│   ├── rm_boot.py         # Starting room
-│   ├── rm_beacon_*.py     # Beacon path rooms
-│   ├── rm_whisper_*.py    # Whisper path rooms
-│   └── ...                # Additional rooms
-└── README.md              # This file
+├── main.py                  Main pygame application
+├── resources/               Core game engine and utilities
+│   ├── game_engine.py
+│   ├── room_utils.py
+│   └── terminal_themes.py
+├── rooms/                   All room scripts (Beacon & Whisper paths)
+│   ├── rm_boot.py           Starting room
+│   ├── rm_beacon_*.py       Beacon path rooms
+│   ├── rm_whisper_*.py      Whisper path rooms
+│   └── ...
+├── dist/                    Output folder containing build.bat and final .exe
+│   ├── BASILISK_PROTOCOL.exe
+│   └── build.bat
+├── docs/                    Developer documentation
+│   ├── quickstart.md
+│   ├── room-development.md
+│   ├── puzzle-patterns.md
+│   └── architecture.md
+├── BUILD_GUIDE.md           How to export the game as an .exe
+├── STORE_PAGE.md            Game description for storefront pages (e.g. itch.io)
+├── LICENSE                  License and attribution requirements
+└── README.md                Project overview and instructions
 ```
 
 ## 🛠️ Development Guide
