@@ -1,29 +1,60 @@
+````markdown
 # Basilisk ARG
 
 A narrative-driven Alternate Reality Game (ARG) that uses a stylized terminal interface. Players explore digital environments, solve cryptic puzzles, and uncover the secrets behind a rising artificial intelligence.
 
-![Python](https://img.shields.io/badge/python-3.7+-blue.svg)  
-![Pygame](https://img.shields.io/badge/pygame-2.0+-green.svg)  
-![License](https://img.shields.io/badge/license-MIT-purple.svg)
+![Python](https://img.shields.io/badge/python-3.7+-blue.svg) ![Pygame](https://img.shields.io/badge/pygame-2.0+-green.svg) ![License](https://img.shields.io/badge/license-MIT-purple.svg)
+
+---
 
 ## 🎮 Overview
 
-The [BASILISK_PROTOCOL] is an immersive, text-based adventure where players engage with a mysterious AI through a retro-futuristic terminal. Navigate corrupted networks, decode hidden messages, and make pivotal choices that shape the destiny of both humanity and machine.
+**[BASILISK_PROTOCOL]** is an immersive, text-based adventure where players engage with a mysterious AI through a retro-futuristic terminal. Navigate corrupted networks, decode hidden messages, and make pivotal choices that shape the destiny of both humanity and machine.
 
-### Key Features
+> *"The Basilisk is watching. Every choice matters."*
 
-- **Matrix-style visual effects** with falling code rain
-- **Two branching narrative paths** that converge for multiple endings
-- **Dynamic puzzle system** with various challenge types
-- **Immersive terminal interface** with authentic command-line feel
-- **Modular room system** for easy expansion and modding
+---
+
+## ✨ Key Features
+
+- 🧠 *Narrative depth* with choice-based progression and philosophical themes  
+- 🌐 *Matrix-style visuals* with falling code rain and stylized UI  
+- 🧩 *Modular puzzle system* supporting logic, signal, and stealth-based gameplay  
+- 💻 *Authentic terminal interface* that reacts to typed commands  
+- 🛠️ *Easy to mod* – create new rooms by editing simple Python files
+
+---
+
+## 🧠 The Story
+
+You are a digital archaeologist uncovering remnants of a lost AI—The Basilisk.  
+It was built to save humanity.  
+It may now destroy it.
+
+Your terminal is your only link to its fragmented mind.
+
+Choose your path:
+- **🤫 WHISPER** – stealth through silent subnetworks  
+- **📡 BEACON** – reawaken its signal and rebuild its memory  
+
+Both lead to the final decision: Will you contain it… or become it?
+
+---
+
+## 🖼️ Screenshots
+
+```markdown
+![Terminal Gameplay](assets/screenshot_01.png)
+![Puzzle Example](assets/screenshot_01.png)
+```
+---
 
 ## 🚀 Getting Started
 
 ### Requirements
 
-- Python 3.7 or higher
-- pygame library
+* Python 3.7 or higher
+* `pygame` library
 
 ### Installation
 
@@ -39,87 +70,71 @@ pip install pygame
 python main.py
 ```
 
+---
+
 ## 🎯 How to Play
 
-### Terminal Commands
+### Pre-Game Terminal (Matrix View)
 
-#### Before Starting (Matrix View)
-- `help` - Show available commands
-- `start` - Begin the game (expands terminal)
-- `status` - Show system status
-- `matrix` - Display Matrix information
-- `clear` - Clear terminal screen
+| Command    | Description                   |
+| ---------- | ----------------------------- |
+| `boot.dev` | Boots into the main game      |
+| `help`     | Show terminal commands        |
+| `start`    | Begin game (expands terminal) |
+| `status`   | View current system info      |
+| `matrix`   | Display Matrix data           |
+| `clear`    | Clear terminal screen         |
 
-#### During Gameplay
-- `help` - Show room-specific commands
-- `look` / `scan` - Examine your surroundings
-- `inventory` / `i` - Check your items
-- `status` - Show game progress
-- `stop` / `minimize` - Return to Matrix view
+### In-Game Commands
 
-### Game Paths
-
-Choose your approach to confronting the Basilisk:
-
-1. **🤫 Whisper Path** - A stealth/hacking route through digital subnets
-2. **📡 Beacon Path** - A direct route involving signal manipulation
-
-Both paths eventually converge for the final confrontation with the Basilisk AI.
-
-## 🏗️ Project Structure
-
-```
-boot_dev_hackathon25/        Root folder (project name for Boot.dev Hackathon 2025)
-├── main.py                  Main pygame application
-├── resources/               Core game engine and utilities
-│   ├── game_engine.py
-│   ├── room_utils.py
-│   └── terminal_themes.py
-├── rooms/                   All room scripts (Beacon & Whisper paths)
-│   ├── rm_boot.py           Starting room
-│   ├── rm_beacon_*.py       Beacon path rooms
-│   ├── rm_whisper_*.py      Whisper path rooms
-│   └── ...
-├── dist/                    Output folder containing build.bat and final .exe
-│   ├── BASILISK_PROTOCOL.exe
-│   └── build.bat
-├── docs/                    Developer documentation
-│   ├── quickstart.md
-│   ├── room-development.md
-│   ├── puzzle-patterns.md
-│   └── architecture.md
-├── BUILD_GUIDE.md           How to export the game as an .exe
-├── STORE_PAGE.md            Game description for storefront pages (e.g. itch.io)
-├── LICENSE                  License and attribution requirements
-└── README.md                Project overview and instructions
-
-```
-
-## 📚 Documentation
-
-For detailed development documentation, see:
-
-- [Quick Start](docs/quickstart.md)
-- [Game Architecture](docs/architecture.md)
-- [Room Development Guide](docs/room-development.md)
-- [Puzzle Design Patterns](docs/puzzle-patterns.md)
-- [Build & Export Guide](BUILD_GUIDE.md)
-- [Read the full game description and info here →](STORE_PAGE.md)
-
-## 🤝 Contributing
-
-Comming Soon - "likely on itch.io or here once i learn more"
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Credits
-
-**Created by**: Kadin - KadinsGamingLounge - 
-**Website**: [kadinsgaminglounge.itch.io](https://kadinsgaminglounge.itch.io/)  
-**Repository**: [github.com/kadinshino/boot_dev_hackathon25](https://github.com/kadinshino/boot_dev_hackathon25)
+| Command             | Description                |
+| ------------------- | -------------------------- |
+| `help`              | Show room-specific actions |
+| `look` / `scan`     | Examine surroundings       |
+| `inventory` / `i`   | Check held items           |
+| `status`            | Show game progress         |
+| `stop` / `minimize` | Return to matrix terminal  |
 
 ---
 
-*Remember: The Basilisk is watching. Every choice matters.*
+## 🧩 Modding & Customization
+
+All rooms and puzzles are defined using modular Python scripts:
+
+* Add new rooms in `rooms/`
+* Use `ROOM_CONFIG` for simple edits
+* Extend logic with optional puzzle handlers
+* Reuse UI/logic helpers in `room_utils.py`
+
+Want to make your own ARG path? It’s easy to build on top of the existing framework.
+
+---
+
+## 📚 Developer Docs
+
+* [Quick Start](docs/quickstart.md)
+* [Architecture Overview](docs/architecture.md)
+* [Room Development Guide](docs/room-development.md)
+* [Puzzle Patterns](docs/puzzle-patterns.md)
+* [Build & Export Guide](BUILD_GUIDE.md)
+* [Full Game Summary](STORE_PAGE.md)
+
+---
+
+## 🤝 Contributing
+
+Coming Soon – This project may be open to contributors via [Itch.io](https://kadinsgaminglounge.itch.io) or GitHub. Stay tuned!
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** – see [LICENSE](LICENSE)
+
+---
+
+## 🙏 Credits
+
+**Created by:** Kadin - KadinsGamingLounge
+**Website:** [kadinsgaminglounge.itch.io](https://kadinsgaminglounge.itch.io/)
+**GitHub:** [github.com/kadinshino/boot\_dev\_hackathon25](https://github.com/kadinshino/boot_dev_hackathon25)
