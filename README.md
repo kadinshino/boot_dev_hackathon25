@@ -69,7 +69,7 @@ Both paths eventually converge for the final confrontation with the Basilisk AI.
 ## 🏗️ Project Structure
 
 ```
-basilisk-arg/
+boot_dev_hackathon25/        Root folder (project name for Boot.dev Hackathon 2025)
 ├── main.py                  Main pygame application
 ├── resources/               Core game engine and utilities
 │   ├── game_engine.py
@@ -92,6 +92,7 @@ basilisk-arg/
 ├── STORE_PAGE.md            Game description for storefront pages (e.g. itch.io)
 ├── LICENSE                  License and attribution requirements
 └── README.md                Project overview and instructions
+
 ```
 
 ## 🛠️ Development Guide
