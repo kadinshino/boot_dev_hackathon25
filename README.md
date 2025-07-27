@@ -222,7 +222,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Credits
 
-**Created by**: Kadin Maxey  
+**Created by**: KadinGamingLounge
 **Website**: [kadinsgaminglounge.itch.io](https://kadinsgaminglounge.itch.io/)  
 **Repository**: [github.com/kadinshino/boot_dev_hackathon25](https://github.com/kadinshino/boot_dev_hackathon25)
 
