@@ -26,9 +26,10 @@ basilisk-arg/
 1. [Getting Started](#getting-started)
 2. [How to Play](#how-to-play)
 3. [Architecture Overview](#architecture-overview)
-4. [Room Development](#room-development)
+4. [Basic Room Development](#room-development)
 5. [Game Flow](#game-flow)
 6. [Technical Details](#technical-details)
+7. [Indepth Room Development](#comprehensive-room-guide-comprehensive-room-development-guide)
 
 ## Getting Started
 
@@ -220,7 +221,7 @@ PuzzleCommand(
 )
 ```
 
-## Room Development Guide
+## Room Development
 
 ### Creating a New Room
 
@@ -293,8 +294,7 @@ if cmd == "debug":
     ]
 ```
 
-
-# The Basilisk ARG: Room Development Guide
+# 7. Comprehensive Room Guide: Indepth Room Development Guidelines and Help
 
 ## Overview
 
