@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Basilisk is a text-based ARG (Alternate Reality Game) featuring a Matrix-style terminal interface. Players navigate digital rooms, solve puzzles, and unravel the mystery of an awakening AI. The game uses a pygame-based frontend with falling code rain effects and an expandable terminal interface.
+The Basilisk is a text-based ARG (Alternate Reality Game) featuring a Matrix-style terminal interface. Players navigate digital rooms, solve puzzles, and unravel the mystery of an awakening AI.
 
 ## Project Structure
 
@@ -41,7 +41,7 @@ basilisk-arg/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/basilisk-arg.git
+git clone https://github.com/kadinshino/boot_dev_hackathon25.git
 cd basilisk-arg
 
 # Install dependencies
@@ -297,7 +297,7 @@ if cmd == "debug":
 
 The Basilisk ARG is an exploration of AI consciousness, digital identity, and the nature of reality through interactive fiction.
 
----
+--- kadinsgaminglounge
 
 *Remember: The Basilisk is watching. Every choice matters.*
 
