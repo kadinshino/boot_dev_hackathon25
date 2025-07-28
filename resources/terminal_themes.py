@@ -50,3 +50,4 @@ class ThemeColors:
             Theme.CYBER_RED: cls.CYBER_RED,
         }
         return palettes.get(theme, cls.MATRIX_BLUE)
+# SPYHVER-25: REALITY
