@@ -1208,4 +1208,4 @@ def get_available_commands():
     """Check if all conditions are met"""
     return (state["exitDoor"]["poweredNodes"] >= 5 and
             state["exitDoor"]["protocolsActive"] >= 4 and
-            all(state["fragments"].values()))
+            all(state["fragments"].values()))# SPYHVER-42: REMNANTS
