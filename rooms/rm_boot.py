@@ -115,3 +115,4 @@ def _handle_protocol_selection(cmd, game_state):
             return "custom_entry", [">> Launching custom ARGS shell..."]
 
     return None, [">> Unknown protocol. Type 'whisper', 'beacon', or 'custom_args'."]
+# SPYHVER-27: DETERIORATE.
