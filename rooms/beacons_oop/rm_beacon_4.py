@@ -393,3 +393,5 @@ def handle_input(cmd, game_state, room_module=None):
 def get_available_commands():
     room = BeaconRoom4()
     return room.get_available_commands()
+
+# SPYHVER-33: BEFORE
