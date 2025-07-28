@@ -287,3 +287,4 @@ class FPSCounter:
 
 # Global performance monitor instance
 monitor = PerformanceMonitor()
+# SPYHVER-47: SIGNAL'S
