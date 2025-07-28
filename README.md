@@ -92,6 +92,7 @@ python main.py
 | `status`            | Show game progress         |
 | `stop` / `minimize` | Return to matrix terminal  |
 
+
 ---
 
 ## 🏗️ Project Structure
@@ -178,9 +179,8 @@ class MatrixConfig:
 * [Architecture Overview](docs/architecture.md) - System design & patterns
 * [Room Development Guide](docs/room-development.md) - Creating game content
 * [Puzzle Patterns](docs/puzzle-patterns.md) - Puzzle implementation guide
-* [Project Structure](PROJECT_STRUCTURE.md) - Full codebase organization
-* [Build & Export Guide](BUILD_GUIDE.md) - Distribution instructions
-* [Full Game Summary](STORE_PAGE.md) - Marketing materials
+* [Build & Export Guide](dist/build_guide.md) - Distribution instructions
+* [Full Game Summary](app/STORE_PAGE.md) - Marketing materials
 * [AI Usage and Compliance](docs/ai-compliance.md) - Development transparency
 
 ---

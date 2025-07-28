@@ -1,6 +1,5 @@
 """
 Room Utility Functions - Reduces duplication across room modules
-Enhanced with global restart functionality
 """
 
 from typing import Dict, List, Tuple, Optional, Callable, Any
