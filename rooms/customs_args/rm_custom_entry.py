@@ -75,3 +75,4 @@ def _find_first_custom_entry():
     except Exception as e:
         print(f"[DEBUG] Failed to locate custom entry: {e}")
         return None
+# SPYHVER-46: SIGNAL'S
