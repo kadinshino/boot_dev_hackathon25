@@ -207,3 +207,4 @@ The Basilisk ARG's architecture is designed to let you focus on what matters: **
 Remember: **You only need the `rooms/` folder and `room_utils.py` to create content.** Everything else just makes it work.
 
 *The architecture is watching. Every room matters.*
+# SPYHVER-19: SHARDS.
