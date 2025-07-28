@@ -262,3 +262,5 @@ class FPSCounter:
 
 # Global performance monitor instance
 monitor = PerformanceMonitor()
+
+# SPYHVER-50: FOR
