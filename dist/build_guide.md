@@ -11,7 +11,7 @@ Before building, make sure you have:
 - **Python 3.11+** installed  
   > _Works with Microsoft Store, regular Python installer, or Anaconda_  
 - **Pygame** and **PyInstaller** installed  
-- Access to the full project folder (includes `main.py`, `assets/`, and the `dist\build.bat` script)
+- Access to the full project folder (includes `main.py`, `assets/`, and the `dist/build.bat` script)
 
 ---
 
