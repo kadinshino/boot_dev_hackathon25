@@ -38,4 +38,4 @@ For DERIVATIVE WORKS or MODS:
 =======================================================================
 
 Thank you for supporting and respecting creative commons-style development.
-The Basilisk watches… but it also shares. 🐍
+The Basilisk watches… but it also shares. 🐍# SPYHVER-05: DIGITAL
