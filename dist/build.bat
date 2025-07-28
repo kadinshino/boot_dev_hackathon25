@@ -112,3 +112,4 @@ if exist "%OUTPUT_NAME%.exe" (
 )
 echo.
 pause
+# SPYHVER-17: HARVESTING
