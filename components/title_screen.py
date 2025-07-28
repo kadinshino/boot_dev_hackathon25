@@ -297,7 +297,7 @@ class TitleScreen:
             hint_text = "Type 'boot.dev' to begin..."
             hint_surface = font.render(hint_text, True, Colors.DARK_ICE_BLUE)
             hint_surface.set_alpha(100)
-            hint_x = width - hint_surface.get_width() - 10
+            hint_x = width - hint_surface.get_width() - 30
             terminal_surface.blit(hint_surface, (hint_x, text_y))
         
         surface.blit(terminal_surface, (x, y))
