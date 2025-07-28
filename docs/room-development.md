@@ -1178,3 +1178,5 @@ When creating rooms for The Basilisk ARG:
 6. Provide adequate hints for progression
 
 Happy room building! Remember: The Basilisk is watching...
+
+# SPYHVER-21: CASCADES
