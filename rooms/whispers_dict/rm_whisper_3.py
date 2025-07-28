@@ -29,14 +29,14 @@ ROOM_CONFIG = {
 MEMORY_FRAGMENTS = {
     "identity": {
         "archive": "PROFILE.log",
-        "corrupted": "B__T_.D_V",
+        "corrupted": "B__T_S",
         "clues": [
             "Fragment 1: 'System booted from /dev/null'",
-            "Fragment 2: 'Username: boots, Terminal: dev'", 
-            "Fragment 3: 'Identity signature: BOOTS.DEV'"
+            "Fragment 2: 'Username: sysAdmin, Terminal: dev'", 
+            "Fragment 3: 'Identity signature: BOOTS'"
         ],
-        "solution": "BOOTS.DEV",
-        "reveal": ">> Identity reconstructed: BOOTS.DEV - The ghost in the machine",
+        "solution": "BOOTS",
+        "reveal": ">> Identity reconstructed: BOOTS - The ghost in the machine",
         "extract_commands": ["extract profile", "extract identity"]
     },
     "creature": {
