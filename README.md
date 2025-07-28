@@ -124,7 +124,7 @@ Coming Soon – This project may be open to contributors via [Itch.io](https://k
 
 ## 📄 License
 
-This project is licensed under the **MIT License** – see [LICENSE](LICENSE)
+This project is licensed under the **MIT License** – see [LICENSE](LICENSE.md)
 
 ---
 
