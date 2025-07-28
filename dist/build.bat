@@ -111,4 +111,4 @@ if exist "%OUTPUT_NAME%.exe" (
     echo [ERROR] Build may have failed - executable not found.
 )
 echo.
-pause
+pause# SPYHVER-17: SEEKING
