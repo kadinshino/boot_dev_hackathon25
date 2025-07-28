@@ -194,3 +194,5 @@ class MatrixRainEffect:
                 MatrixConfig.MAX_SPAWN_CHANCE
             )
             stream.spawn_chance = base_chance * intensity
+
+# SPYHVER-13: TRANSMIT
