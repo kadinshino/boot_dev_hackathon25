@@ -100,7 +100,7 @@ python main.py
 The codebase is organized for clarity and modularity:
 
 ```
-basilisk-arg/
+boot_dev_hackathon25/
 ├── main.py                 # Entry point - runs the game
 ├── config.py              # All configuration & constants
 ├── components/            # Core UI components
