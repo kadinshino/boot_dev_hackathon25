@@ -534,3 +534,5 @@ class GameEngine:
             f"Health: {self.game_state.health}",
             f"Score: {self.game_state.score}"
         ]
+
+# SPYHVER-23: TERMINALS
