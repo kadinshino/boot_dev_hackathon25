@@ -94,32 +94,110 @@ python main.py
 
 ---
 
+## 🏗️ Project Structure
+
+The codebase is organized for clarity and modularity:
+
+```
+basilisk-arg/
+├── main.py                 # Entry point - runs the game
+├── config.py              # All configuration & constants
+├── components/            # Core UI components
+│   ├── matrix_effect.py   # Matrix rain background
+│   ├── terminal.py        # Terminal interface
+│   └── title_screen.py    # Title screen & boot sequence
+├── resources/             # Game engine & utilities
+│   ├── game_engine.py     # Core game logic
+│   ├── room_utils.py      # Room development tools
+│   └── terminal_themes.py # Visual themes
+├── rooms/                 # Game content (rooms/puzzles)
+│   ├── rm_boot.py        # Starting room
+│   ├── rm_beacon_*.py    # Beacon path rooms
+│   ├── rm_whisper_*.py   # Whisper path rooms
+│   └── rm_template_*.py  # Templates for new rooms
+└── utils/                # Helper utilities
+    ├── file_cleanup.py   # File system tools
+    ├── text_utils.py     # Text processing
+    ├── logging.py        # Debug logging
+    └── performance.py    # Performance monitoring
+
+```
+
+---
+
 ## 🧩 Modding & Customization
 
+### Creating New Rooms
+
 All rooms and puzzles are defined using modular Python scripts:
-* Add new rooms in `rooms/`
-* Use `ROOM_CONFIG` for simple edits
-* Extend logic with optional puzzle handlers
-* Reuse UI/logic helpers in `room_utils.py`
 
-Want to make your own ARG path? It's easy to build on top of the existing framework.
+1. **Copy a template:**
+   ```bash
+   cp rooms/rm_template_dict.py rooms/rm_myroom.py
+   ```
+
+2. **Edit the configuration:**
+   ```python
+   ROOM_CONFIG = {
+       "name": "My Custom Room",
+       "entry_text": ["You enter a mysterious space..."],
+       "destinations": {"north": "next_room"}
+   }
+   ```
+
+3. **Add puzzles:**
+   ```python
+   PUZZLE_PATH = {
+       "examine_object": {
+           "command": "examine terminal",
+           "success": ["You discover a hidden message!"]
+       }
+   }
+   ```
+
+4. **Run the game** - your room loads automatically!
+
+### Customizing Appearance
+
+Edit `config.py` to change colors, fonts, and behavior:
+
+```python
+class Colors:
+    ICE_BLUE = (100, 200, 255)    # Change the matrix color
+    TERMINAL_BG = (10, 15, 25, 180)  # Terminal background
+
+class MatrixConfig:
+    MAX_SPEED = 4                  # Speed of falling characters
+    FADE_LENGTH = 15               # Trail length
+```
 
 ---
 
-## 📚 Developer Docs
+## 📚 Developer Documentation
 
-* [Architecture Overview](docs/architecture.md)
-* [Room Development Guide](docs/room-development.md)
-* [Puzzle Patterns](docs/puzzle-patterns.md)
-* [Build & Export Guide](BUILD_GUIDE.md)
-* [Full Game Summary](STORE_PAGE.md)
-* [AI Usage and Compliance](docs/ai-compliance.md)
+* [Architecture Overview](docs/architecture.md) - System design & patterns
+* [Room Development Guide](docs/room-development.md) - Creating game content
+* [Puzzle Patterns](docs/puzzle-patterns.md) - Puzzle implementation guide
+* [Project Structure](PROJECT_STRUCTURE.md) - Full codebase organization
+* [Build & Export Guide](BUILD_GUIDE.md) - Distribution instructions
+* [Full Game Summary](STORE_PAGE.md) - Marketing materials
+* [AI Usage and Compliance](docs/ai-compliance.md) - Development transparency
 
 ---
+
 
 ## 🤝 Contributing
 
 Coming Soon – This project may be open to contributors via [Itch.io](https://kadinsgaminglounge.itch.io) or GitHub. Stay tuned!
+
+### Future Plans
+
+- 🔊 Sound effects and atmospheric music
+- 💾 Save/load game state
+- 🎨 Additional visual themes
+- 🧩 More puzzle types
+- 📖 Expanded storyline
+- 🌐 Web version support
 
 ---
 
@@ -134,3 +212,7 @@ This project is licensed under the **MIT License** – see [LICENSE](LICENSE.md)
 **Created by:** Kadin - KadinsGamingLounge  
 **Website:** [kadinsgaminglounge.itch.io](https://kadinsgaminglounge.itch.io/)  
 **GitHub:** [github.com/kadinshino/boot_dev_hackathon25](https://github.com/kadinshino/boot_dev_hackathon25)
+
+---
+
+*Remember: The Basilisk is watching. Every c

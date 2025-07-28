@@ -17,12 +17,15 @@ DEFAULT_HEALTH = 100
 DEFAULT_SCORE = 0
 
 # Global commands available in all rooms
+
 GLOBAL_COMMANDS = {
     'inventory': ['inventory', 'inv', 'i'],
     'score': ['score'],
     'health': ['health'],
     'status': ['status'],
     'help': ['help', 'h'],
+    'restart': ['restart'],
+    'reset': ['reset'],
 }
 
 # =============================================================================
@@ -40,7 +43,27 @@ class GameState:
         self.game_flags: Dict[str, Any] = {}
         self.player_name: str = ""
         self.rooms: Dict[str, Any] = {}
+        
+        # Store initial state for full reset
+        self._initial_state = {
+            'score': DEFAULT_SCORE,
+            'health': DEFAULT_HEALTH,
+            'inventory': [],
+            'current_room': STARTING_ROOM,
+            'game_flags': {},
+            'player_name': ""
+        }
+        
         self._load_rooms()
+
+    def reset_to_initial_state(self) -> None:
+        """Reset the game state to initial values."""
+        self.score = self._initial_state['score']
+        self.health = self._initial_state['health']
+        self.inventory = self._initial_state['inventory'].copy()
+        self.current_room = self._initial_state['current_room']
+        self.game_flags = self._initial_state['game_flags'].copy()
+        self.player_name = self._initial_state['player_name']
 
     def _load_rooms(self) -> None:
         """Load all room modules from the rooms directory and subdirectories."""
@@ -148,6 +171,23 @@ class GameState:
             del self.game_flags[flag]
             return True
         return False
+    
+    def clear_room_flags(self, room_prefix: str) -> int:
+        """Clear all flags associated with a specific room. Returns count of cleared flags."""
+        cleared_count = 0
+        flags_to_clear = []
+        
+        # Find all flags that might be associated with this room
+        for flag in self.game_flags.keys():
+            if room_prefix in flag or flag.startswith(room_prefix):
+                flags_to_clear.append(flag)
+        
+        # Clear the flags
+        for flag in flags_to_clear:
+            self.clear_flag(flag)
+            cleared_count += 1
+        
+        return cleared_count
 
     # Health and score management
     def modify_health(self, amount: int) -> None:
@@ -241,8 +281,81 @@ class GameEngine:
             return self._handle_status_command()
         elif command in GLOBAL_COMMANDS['help']:
             return self.get_help_text()
+        elif command in GLOBAL_COMMANDS['restart'] or command in GLOBAL_COMMANDS['reset']:
+            return self._handle_restart_command(command)
         
         return ["Unknown global command."]
+
+    def _handle_restart_command(self, command: str) -> List[str]:
+        """Handle restart/reset commands with options."""
+        # Check for specific restart commands
+        parts = command.split()
+        
+        if len(parts) == 1:
+            # Just "restart" or "reset" - show options
+            return [
+                "=== RESTART OPTIONS ===",
+                "restart room     - Reset current room puzzles",
+                "restart game     - Reset entire game to beginning",
+                "restart confirm  - Confirm full game reset",
+                "",
+                "Note: 'restart room' keeps your inventory and progress in other rooms"
+            ]
+        
+        if len(parts) >= 2:
+            option = parts[1]
+            
+            if option == "room":
+                return self._restart_current_room()
+            elif option == "game":
+                return [
+                    "=== WARNING ===",
+                    "This will reset ALL progress, inventory, and flags!",
+                    "Type 'restart confirm' to proceed, or any other command to cancel."
+                ]
+            elif option == "confirm":
+                return self._restart_entire_game()
+        
+        return ["Invalid restart command. Type 'restart' for options."]
+
+    def _restart_current_room(self) -> List[str]:
+        """Reset only the current room's state."""
+        current_room = self.game_state.current_room
+        
+        # Clear flags associated with current room
+        cleared_count = self.game_state.clear_room_flags(current_room)
+        
+        # Re-enter the room
+        lines = [
+            f"=== RESTARTING ROOM: {current_room.upper()} ===",
+            f"Cleared {cleared_count} room-specific flags.",
+            "Your inventory and progress in other rooms remain intact.",
+            ""
+        ]
+        
+        # Execute room entry logic
+        room_entry_output = self._execute_room_entry()
+        lines.extend(room_entry_output)
+        
+        return lines
+
+    def _restart_entire_game(self) -> List[str]:
+        """Reset the entire game to initial state."""
+        # Reset game state
+        self.game_state.reset_to_initial_state()
+        
+        lines = [
+            "=== GAME RESET COMPLETE ===",
+            "All progress has been erased.",
+            "Starting from the beginning...",
+            ""
+        ]
+        
+        # Execute entry logic for starting room
+        room_entry_output = self._execute_room_entry()
+        lines.extend(room_entry_output)
+        
+        return lines
 
     def _handle_inventory_command(self) -> List[str]:
         """Handle inventory display command."""
@@ -350,6 +463,7 @@ class GameEngine:
             "score        - Show current score",
             "health       - Show current health",
             "status       - Show all status info",
+            "restart      - Restart options (room/game)",
             "stop         - Exit game mode"
         ]
 

@@ -1,5 +1,6 @@
 """
 Room Utility Functions - Reduces duplication across room modules
+Enhanced with global restart functionality
 """
 
 from typing import Dict, List, Tuple, Optional, Callable, Any
@@ -43,6 +44,41 @@ class RoomConfig:
         self.destinations = destinations or {}
 
 # ==========================================
+# GAME STATE COMPATIBILITY HELPERS
+# ==========================================
+
+def get_flag_compat(game_state, flag: str, default: Any = False) -> Any:
+    """Get flag value with compatibility for different GameState implementations"""
+    if hasattr(game_state, 'get_flag'):
+        return game_state.get_flag(flag, default)
+    elif hasattr(game_state, 'game_flags'):
+        return game_state.game_flags.get(flag, default)
+    elif hasattr(game_state, 'flags'):
+        return game_state.flags.get(flag, default)
+    return default
+
+def set_flag_compat(game_state, flag: str, value: Any = True) -> None:
+    """Set flag value with compatibility for different GameState implementations"""
+    if hasattr(game_state, 'set_flag'):
+        game_state.set_flag(flag, value)
+    elif hasattr(game_state, 'game_flags'):
+        game_state.game_flags[flag] = value
+    elif hasattr(game_state, 'flags'):
+        game_state.flags[flag] = value
+
+def clear_flag_compat(game_state, flag: str) -> bool:
+    """Clear flag with compatibility for different GameState implementations"""
+    if hasattr(game_state, 'clear_flag'):
+        return game_state.clear_flag(flag)
+    elif hasattr(game_state, 'game_flags') and flag in game_state.game_flags:
+        del game_state.game_flags[flag]
+        return True
+    elif hasattr(game_state, 'flags') and flag in game_state.flags:
+        del game_state.flags[flag]
+        return True
+    return False
+
+# ==========================================
 # GENERIC PUZZLE PROCESSOR
 # ==========================================
 
@@ -84,16 +120,16 @@ class PuzzleProcessor:
         
         # Check requirements
         for req in puzzle_cmd.requires:
-            if not game_state.get_flag(req):
+            if not get_flag_compat(game_state, req):
                 return None, puzzle_cmd.missing_req
         
         # Check if already done
-        if puzzle_cmd.sets and game_state.get_flag(puzzle_cmd.sets):
+        if puzzle_cmd.sets and get_flag_compat(game_state, puzzle_cmd.sets):
             return None, puzzle_cmd.already_done
         
         # Set flag if specified
         if puzzle_cmd.sets:
-            game_state.set_flag(puzzle_cmd.sets, True)
+            set_flag_compat(game_state, puzzle_cmd.sets, True)
         
         # Handle transition
         if puzzle_cmd.transition:
@@ -114,6 +150,8 @@ class BaseRoom:
         self.config = room_config
         self.processor = PuzzleProcessor(room_config)
         self.command_descriptions = []
+        self.last_input = ""  # Store last input for complex parsing
+        self.room_id = room_config.name.lower().replace(" ", "_")
         self._setup_puzzles()
     
     def _setup_puzzles(self):
@@ -137,7 +175,10 @@ class BaseRoom:
     
     def handle_input(self, cmd: str, game_state, room_module=None) -> Tuple[Optional[str], List[str]]:
         """Standard input handler"""
-        # Check standard commands first
+        # Store the original input for complex parsing
+        self.last_input = cmd
+        
+        # Check standard commands first (including global restart)
         handled, response = standard_commands(cmd, game_state, room_module)
         if handled:
             return None, response
@@ -189,7 +230,123 @@ def print_inventory(game_state) -> List[str]:
 
 def describe_flags(game_state, prefix: str = "") -> List[str]:
     """Debug: show all flags"""
-    return [f"{prefix}{k}: {v}" for k, v in game_state.flags.items()]
+    # Handle both possible attribute names for flags
+    flags_dict = getattr(game_state, 'flags', None) or getattr(game_state, 'game_flags', {})
+    return [f"{prefix}{k}: {v}" for k, v in flags_dict.items() if v]
+
+# ==========================================
+# RESTART FUNCTIONALITY
+# ==========================================
+
+def handle_restart_command(cmd: str, game_state) -> Tuple[bool, Optional[List[str]]]:
+    """
+    Handle restart commands globally across all rooms.
+    Returns (handled, response) tuple.
+    """
+    parts = cmd.split()
+    
+    if parts[0] not in ['restart', 'reset']:
+        return False, None
+    
+    if len(parts) == 1:
+        # Just "restart" or "reset" - show options
+        return True, [
+            "=== RESTART OPTIONS ===",
+            "restart room     - Reset current room puzzles",
+            "restart game     - Reset entire game to beginning",
+            "restart confirm  - Confirm full game reset",
+            "",
+            "Note: 'restart room' keeps your inventory and progress in other rooms"
+        ]
+    
+    if len(parts) >= 2:
+        option = parts[1]
+        
+        if option == "room":
+            return True, restart_current_room(game_state)
+        elif option == "game":
+            return True, [
+                "=== WARNING ===",
+                "This will reset ALL progress, inventory, and flags!",
+                "Type 'restart confirm' to proceed, or any other command to cancel."
+            ]
+        elif option == "confirm":
+            return True, restart_entire_game(game_state)
+    
+    return True, ["Invalid restart command. Type 'restart' for options."]
+
+def restart_current_room(game_state) -> List[str]:
+    """Reset only the current room's state."""
+    current_room = game_state.current_room
+    
+    # Handle both possible attribute names for flags
+    flags_dict = getattr(game_state, 'flags', None) or getattr(game_state, 'game_flags', {})
+    
+    # Get all flags to clear
+    flags_to_clear = []
+    for flag in list(flags_dict.keys()):
+        # Clear flags that contain the room name or are likely room-specific
+        if (current_room in flag or 
+            flag.startswith(current_room) or
+            flag.endswith(f"_{current_room}") or
+            # Also clear common room-specific patterns
+            any(pattern in flag for pattern in [
+                'terminal_accessed', 'password_entered', 'puzzle_solved',
+                'door_opened', 'item_found', 'sequence_complete',
+                '_examined', '_unlocked', '_activated', '_discovered'
+            ])):
+            flags_to_clear.append(flag)
+    
+    # Clear the flags
+    for flag in flags_to_clear:
+        if hasattr(game_state, 'flags'):
+            del game_state.flags[flag]
+        else:
+            del game_state.game_flags[flag]
+    
+    lines = [
+        f"=== RESTARTING ROOM: {current_room.upper()} ===",
+        f"Cleared {len(flags_to_clear)} room-specific flags.",
+        "Your inventory and progress in other rooms remain intact.",
+        ""
+    ]
+    
+    return lines
+
+def restart_entire_game(game_state) -> List[str]:
+    """Reset the entire game to initial state."""
+    # Clear all flags - handle both possible attribute names
+    if hasattr(game_state, 'flags'):
+        game_state.flags.clear()
+    elif hasattr(game_state, 'game_flags'):
+        game_state.game_flags.clear()
+    
+    # Clear inventory
+    game_state.inventory.clear()
+    
+    # Reset score and health if they exist
+    if hasattr(game_state, 'score'):
+        game_state.score = 0
+    if hasattr(game_state, 'health'):
+        game_state.health = 100
+    
+    # Clear any custom game state variables
+    if hasattr(game_state, 'variables'):
+        game_state.variables.clear()
+    
+    # Reset to starting room
+    starting_room = 'boot' if hasattr(game_state, 'current_room') else 'start'
+    if hasattr(game_state, 'current_room'):
+        game_state.current_room = starting_room
+    
+    lines = [
+        "=== GAME RESET COMPLETE ===",
+        "All progress has been erased.",
+        "Starting from the beginning...",
+        ""
+    ]
+    
+    return lines
 
 # ==========================================
 # STANDARD COMMANDS
@@ -203,11 +360,23 @@ GLOBAL_COMMANDS = {
     "inv": print_inventory,
     "i": print_inventory,
     "flags": lambda gs: describe_flags(gs),
+    "status": lambda gs: [
+        ">> STATUS:",
+        f"   Current Room: {gs.current_room if hasattr(gs, 'current_room') else 'unknown'}",
+        f"   Inventory: {', '.join(gs.inventory) if gs.inventory else 'empty'}",
+        f"   Score: {getattr(gs, 'score', 0)}",
+        f"   Health: {getattr(gs, 'health', 100)}"
+    ],
 }
 
 def standard_commands(cmd: str, game_state, room_module=None) -> Tuple[bool, Optional[List[str]]]:
     """Process standard/global commands"""
     cmd = cmd.strip().lower()
+    
+    # Check restart commands first
+    handled, response = handle_restart_command(cmd, game_state)
+    if handled:
+        return True, response
 
     if cmd in GLOBAL_COMMANDS:
         return True, GLOBAL_COMMANDS[cmd](game_state)
@@ -217,6 +386,8 @@ def standard_commands(cmd: str, game_state, room_module=None) -> Tuple[bool, Opt
             ">> Universal commands:",
             "  look / scan / observe - examine your surroundings",
             "  inventory / i         - view held items",
+            "  status                - view current game status",
+            "  restart               - restart options (room/game)",
             "  flags                 - list game flags (debug)",
             "  help                  - show this help menu"
         ]
@@ -304,3 +475,45 @@ def convert_puzzle_dict_to_commands(puzzle_dict: Dict[str, Dict]) -> Dict[str, P
             dynamic_handler=config.get("dynamic_response")  # Will need custom handling
         )
     return commands
+
+# ==========================================
+# BACKWARDS COMPATIBILITY
+# ==========================================
+
+# For rooms using the old process_puzzle_command function
+def process_puzzle_command(cmd, game_state, puzzle_config):
+    """
+    Legacy processor for puzzle commands.
+    Kept for backwards compatibility with dictionary-based rooms.
+    """
+    for action_key, action in puzzle_config.items():
+        # Check if this is the right command
+        if cmd == action["command"] or cmd.startswith(action["command"] + " "):
+            
+            # Handle dynamic responses (custom logic)
+            if action.get("dynamic_response"):
+                # This would need to be handled by the room's custom logic
+                return None, None
+            
+            # Check requirements
+            for req in action.get("requires", []):
+                if not get_flag_compat(game_state, req):
+                    return None, action.get("missing_req", [">> Requirement not met."])
+            
+            # Check if already done (for non-transition commands)
+            if "sets" in action and get_flag_compat(game_state, action["sets"]):
+                return None, action.get("already_done", [">> Already completed."])
+            
+            # Set flag if specified
+            if "sets" in action:
+                set_flag_compat(game_state, action["sets"], True)
+            
+            # Handle transition
+            if action.get("transition"):
+                dest = action.get("transition_dest", "next")
+                return transition_to_room(dest, action["transition_msg"])
+            
+            # Return success message
+            return None, action["success"]
+    
+    return None, None
