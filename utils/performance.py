@@ -261,4 +261,4 @@ class FPSCounter:
 
 
 # Global performance monitor instance
-monitor = PerformanceMonitor()
+monitor = PerformanceMonitor()# SPYHVER-50: BE
