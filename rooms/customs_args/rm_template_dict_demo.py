@@ -661,3 +661,5 @@ Multi-step puzzle:
     Step 2: requires ["step_1_done"], sets "step_2_done"
     Step 3: requires ["step_2_done"], transition to next room
 """
+
+# SPYHVER-44: RESONATE
