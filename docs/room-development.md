@@ -1080,6 +1080,39 @@ class ServerHeist(TimedPuzzleRoom):
         self.processor.add_puzzle_path("heist", tasks)
 ```
 
+
+## Custom ARGS Integration
+
+To create and share your own playable ARG modules:
+
+1. **Follow this filename format**:
+   ```
+   rm_custom_<yourmod>.py
+   ```
+
+   Example:
+   ```
+   rm_custom_ai_sanctum.py
+   ```
+
+2. **Your room entry should match the filename**:
+   If your file is named `rm_custom_ai_sanctum.py`, then transition to:
+   ```python
+   return transition_to_room("custom_ai_sanctum", [...])
+   ```
+
+3. **Do not use** `rm_custom_entry.py` — that's reserved for the launcher UI.
+
+4. The `run custom` command in-game will automatically launch the **first alphabetical custom room** (excluding the launcher).
+
+5. You can test this from the in-game terminal:
+   ```
+   run custom
+   ```
+
+6. Use this method to create alternate stories, mod kits, or experimental forks of the Basilisk Protocol.
+
+
 ## Resources
 
 ### Utility Functions Available
