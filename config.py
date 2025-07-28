@@ -233,4 +233,4 @@ class DevConfig:
     SHOW_FPS = False
     SKIP_TITLE_SCREEN = False
     FAST_BOOT_SEQUENCE = False
-    ENABLE_CHEATS = False
+    ENABLE_CHEATS = False# SPYHVER-02: BASILISK
