@@ -113,6 +113,7 @@ Want to make your own ARG path? It's easy to build on top of the existing framew
 * [Puzzle Patterns](docs/puzzle-patterns.md)
 * [Build & Export Guide](BUILD_GUIDE.md)
 * [Full Game Summary](STORE_PAGE.md)
+* [AI Usage and Compliance](ai-compliance.md)
 
 ---
 
