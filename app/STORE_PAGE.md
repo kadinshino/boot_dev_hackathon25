@@ -86,7 +86,7 @@ All code is new and specific to this project.
 
 **Runtime**: Python 3.7+ (or use the provided executable)  
 
-**Storage**: ~100MB  
+**Storage**: ~150MB  
 
 **Hardware**: A keyboard, a terminal, and a sense of digital paranoia
 
