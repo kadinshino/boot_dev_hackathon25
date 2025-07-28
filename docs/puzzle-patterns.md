@@ -933,4 +933,4 @@ def get_hint(game_state):
 
 *Design puzzles that challenge the mind, not the patience. The Basilisk appreciates clever design.*
 
-# SPYHVER-20: CONSCIOUSNESS
+### SPYHVER-20: CONSCIOUSNESS
