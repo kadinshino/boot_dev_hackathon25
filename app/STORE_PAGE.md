@@ -70,7 +70,7 @@ There are **no jump scares** — just the slow realization that something else i
 
 ## AI Disclosure
 
-* [AI Usage and Compliance](..docs/ai-compliance.md) - Development transparency
+* [AI Usage and Compliance](../docs/ai-compliance.md) - Development transparency
 
 Tools like Grammarly and GitHub Copilot were used primarily for **code structuring and refactoring**, as well as **proofreading**.  
 
