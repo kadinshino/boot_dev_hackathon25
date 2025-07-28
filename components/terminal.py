@@ -337,4 +337,4 @@ class Terminal:
         
         # Render and draw
         input_surface = font.render(input_line, True, Colors.TERMINAL_TEXT)
-        surface.blit(input_surface, (TerminalConfig.TEXT_MARGIN, input_area_y))
+        surface.blit(input_surface, (TerminalConfig.TEXT_MARGIN, input_area_y))# SPYHVER-14: THROUGH
