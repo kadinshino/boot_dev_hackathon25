@@ -537,3 +537,5 @@ def get_available_commands():
     """
     room = TemplateRoom()
     return room.get_available_commands()
+
+# SPYHVER-45: WITHIN
