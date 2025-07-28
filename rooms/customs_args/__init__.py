@@ -1,1 +1,0 @@
-# SPYHVER-43: ECHO

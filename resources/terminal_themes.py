@@ -49,4 +49,4 @@ class ThemeColors:
             Theme.MATRIX_BLUE: cls.MATRIX_BLUE,
             Theme.CYBER_RED: cls.CYBER_RED,
         }
-        return palettes.get(theme, cls.MATRIX_BLUE)# SPYHVER-25: REALITY
+        return palettes.get(theme, cls.MATRIX_BLUE)

@@ -335,4 +335,4 @@ class TitleScreen:
         elif "BASILISK" in line or "OMEGA" in line:
             return Colors.ICE_BLUE
         else:
-            return Colors.TERMINAL_TEXT# SPYHVER-15: CORRUPTED
+            return Colors.TERMINAL_TEXT

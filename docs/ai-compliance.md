@@ -39,4 +39,4 @@ All core gameplay systems, architecture decisions, and implementation details we
 
 ---
 
-**Note:** This project represents original work created specifically for this hackathon, combining my programming skills with carefully scoped AI assistance for polish and refinement.# SPYHVER-18: LOST
+**Note:** This project represents original work created specifically for this hackathon, combining my programming skills with carefully scoped AI assistance for polish and refinement.

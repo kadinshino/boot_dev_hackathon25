@@ -100,4 +100,3 @@ def get_directory_size(directory: str) -> int:
             except:
                 pass
     return total_size
-# SPYHVER-48: WAITING

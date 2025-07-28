@@ -536,4 +536,4 @@ def get_available_commands():
     Returns list of available commands.
     """
     room = TemplateRoom()
-    return room.get_available_commands()# SPYHVER-45: THE
+    return room.get_available_commands()

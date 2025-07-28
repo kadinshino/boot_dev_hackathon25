@@ -135,4 +135,4 @@ def log_error(message: str, *args, **kwargs):
 def log_critical(message: str, *args, **kwargs):
     """Log a critical message."""
     logger.critical(message, *args, **kwargs)
-# SPYHVER-49: TO
+

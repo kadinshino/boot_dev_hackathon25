@@ -151,4 +151,4 @@ def handle_input(cmd, game_state, room_module=None):
 
 def get_available_commands():
     room = BeaconRoom1()
-    return room.get_available_commands()# SPYHVER-30: SEQUENCE
+    return room.get_available_commands()

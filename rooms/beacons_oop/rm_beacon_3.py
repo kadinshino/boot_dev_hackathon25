@@ -452,4 +452,4 @@ def handle_input(cmd, game_state, room_module=None):
 
 def get_available_commands():
     room = BeaconRoom3()
-    return room.get_available_commands()# SPYHVER-32: TIME
+    return room.get_available_commands()

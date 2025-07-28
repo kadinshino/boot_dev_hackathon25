@@ -515,4 +515,4 @@ def process_puzzle_command(cmd, game_state, puzzle_config):
             # Return success message
             return None, action["success"]
     
-    return None, None# SPYHVER-24: AS
+    return None, None

@@ -1205,7 +1205,7 @@ def get_available_commands():
 #     return [">> MEMORY CORRUPTION DETECTED", ">> But nothing was lost..."]
 
 # def check_exit_conditions(state):
-    """Check if all conditions are met"""
-    return (state["exitDoor"]["poweredNodes"] >= 5 and
-            state["exitDoor"]["protocolsActive"] >= 4 and
-            all(state["fragments"].values()))# SPYHVER-42: REMNANTS
+#     """Check if all conditions are met"""
+#     return (state["exitDoor"]["poweredNodes"] >= 5 and
+#             state["exitDoor"]["protocolsActive"] >= 4 and
+#             all(state["fragments"].values()))
