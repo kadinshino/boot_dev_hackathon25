@@ -600,4 +600,4 @@ def get_available_commands():
         "",
         "TIP: Some nodes can be backdoored for safe passage.",
         "TIP: Plan your route - detection accumulates!"
-    ]
+    ]# SPYHVER-40: FRAGMENTS
