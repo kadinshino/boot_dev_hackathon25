@@ -2,7 +2,70 @@
 
 ## Design Philosophy
 
-The Basilisk ARG is built with two core principles: **accessibility for modders** and **professional code organization**. Drawing from GameMaker Language (GML) patterns, I created a Python-based architecture that feels familiar to game developers while remaining approachable for ARG fans who want to create their own content.
+The Basilisk ARG is built with two core principles in mind: **accessibility for modders** and **professional code organization**. Drawing from our experience with GameMaker Language (GML), we've created a Python-based architecture that feels familiar to game developers while remaining approachable for ARG fans who want to create their own content.
+
+## Project Structure
+
+```
+basilisk-arg/
+├── main.py                 # Entry point - runs the game
+├── config.py              # All configuration & constants
+├── components/            # Core UI components (ignore for modding)
+│   ├── matrix_effect.py   # Matrix rain background
+│   ├── terminal.py        # Terminal interface
+│   └── title_screen.py    # Title screen & boot sequence
+├── resources/             # Game engine & utilities
+│   ├── game_engine.py     # Core game logic (rarely modified)
+│   ├── room_utils.py      # Room development tools (important!)
+│   └── terminal_themes.py # Visual themes
+├── rooms/                 # 🎮 YOUR CONTENT GOES HERE! 🎮
+│   ├── rm_boot.py        # Starting room
+│   ├── rm_beacon_*.py    # Beacon path rooms
+│   ├── rm_whisper_*.py   # Whisper path rooms
+│   └── rm_template_*.py  # Templates for new rooms
+└── utils/                # Helper utilities (ignore for modding)
+    ├── file_cleanup.py   # File system tools
+    ├── text_utils.py     # Text processing
+    ├── logging.py        # Debug logging
+    └── performance.py    # Performance monitoring
+```
+
+## Quick Start for Content Creators
+
+**You only need to focus on the `rooms/` folder!** Everything else is the engine that makes your rooms work.
+
+### What Each Folder Does
+
+#### 🎮 `rooms/` - Where the Magic Happens
+This is where ALL game content lives. Each `.py` file is a self-contained room with its own puzzles, story, and logic. 
+
+**To create content:**
+1. Copy `rm_template_dict.py` or `rm_template_oop.py`
+2. Rename it to `rm_yourroom.py`
+3. Edit the content
+4. Drop it in the `rooms/` folder
+5. It automatically appears in the game!
+
+**Example rooms:**
+- `rm_boot.py` - The starting room where players begin
+- `rm_beacon_1.py`, `rm_beacon_2.py` - Rooms along the "beacon" story path
+- `rm_whisper_1.py`, `rm_whisper_2.py` - Rooms along the "whisper" story path
+
+#### 📚 `resources/` - Your Toolkit
+Contains the tools you'll use when creating rooms:
+- `room_utils.py` - **IMPORTANT!** Contains all the helper functions for room creation:
+  - `BaseRoom` - Base class for object-oriented rooms
+  - `transition_to_room()` - Move players between rooms
+  - `process_puzzle_command()` - Handle puzzle logic
+  - `standard_commands()` - Built-in commands like "help" and "inventory"
+- `game_engine.py` - The core engine (you won't modify this)
+- `terminal_themes.py` - Visual customization options
+
+#### ⚙️ Core Folders (Ignore These)
+- `main.py` - Starts the game
+- `config.py` - Game settings and constants
+- `components/` - UI components (matrix effect, terminal display)
+- `utils/` - Internal helper functions
 
 ## Why Two Development Styles?
 
@@ -22,7 +85,7 @@ PUZZLE_PATH = {
 }
 ```
 
-**Why:**
+**Why we built this:**
 - **Zero barrier to entry** - Anyone who can edit a text file can create rooms
 - **Self-documenting** - The structure explains itself
 - **ARG tradition** - Many ARGs thrive on community-created content
@@ -40,69 +103,18 @@ class DigitalArchive(BaseRoom):
         super().__init__(config)
 ```
 
-**Why:**
+**Why we built this:**
 - **Clean code organization** - Encapsulation and inheritance for complex puzzles
 - **Reusable components** - Base classes for common room types
 - **State management** - Easier to handle complex game states
 - **Professional structure** - Maintainable for long-term development
 
-## Project Structure
-
-```
-basilisk-arg/
-├── main.py                 # Main pygame application
-├── resources/
-│   ├── game_engine.py      # Core game engine
-│   ├── room_utils.py       # Utility functions and base classes
-│   └── terminal_themes.py  # Terminal color themes
-├── rooms/                  # Game rooms directory
-│   ├── rm_boot.py         # Starting room
-│   ├── rm_beacon_*.py     # Beacon path rooms
-│   ├── rm_whisper_*.py    # Whisper path rooms
-│   └── ...                # Additional rooms
-└── README.md              # This file
-```
-
-### Core System (Protected)
-- `resources/` - Engine files that rarely change
-- Provides stability and base functionality
-- Should not be modified by modders
-
-### Content Layer (Moddable)
-- `rooms/` - All game content lives here
-- Drop in new `rm_*.py` files to add content
-- Safe to experiment - won't break core system
-
-## GameMaker Heritage
-
-### Event System Translation
-
-| GML Event | Python Equivalent |
-|-----------|-------------------|
-| Create Event | `def __init__(self)` |
-| Step Event | `def update(self, game_state)` |
-| Key Press Event | `def handle_input(self, cmd, game_state)` |
-| Room Start | `def enter_room(self, game_state)` |
-
-### State Management
-
-```python
-# GML: global.player_health = 100
-# Python: game_state.set("player_health", 100)
-
-# GML: if (instance_exists(obj_key)) 
-# Python: if "key" in game_state.inventory:
-
-# GML: room_goto(rm_next)
-# Python: transition_to_room("rm_next", ["Leaving..."])
-```
-
 ## Module Loading System
 
-Rooms are automatically discovered and loaded:
+Our dynamic loading system automatically discovers and loads rooms:
 
 ```python
-# Any file starting with "rm_" in rooms/ is loaded
+# Automatic discovery - just drop a file in rooms/
 for file in os.listdir("rooms/"):
     if file.startswith("rm_") and file.endswith(".py"):
         # Automatically available in game
@@ -112,80 +124,86 @@ This means:
 - **No registration required** - Drop in a file and it works
 - **Hot-swappable** - Add/remove rooms without recompiling
 - **Conflict-free** - Rooms don't interfere with each other
+- **Community friendly** - Share a single `.py` file to add content
 
-## Quick Examples
+## For Modders: What You Need to Know
 
-### Dictionary Room (Simple)
+### 1. Start Here
+- Open the `rooms/` folder
+- Copy `rm_template_dict.py` (easier) or `rm_template_oop.py` (more powerful)
+- Follow the extensive comments in the template
+
+### 2. Use the Tools
+The `room_utils.py` file provides everything you need:
+```python
+from resources.room_utils import (
+    format_enter_lines,      # Format room entry text
+    standard_commands,       # Handle common commands
+    transition_to_room,      # Move to another room
+    process_puzzle_command   # Process puzzle logic
+)
+```
+
+### 3. Test Your Room
+```bash
+# Run the game
+python main.py
+
+# In game, type:
+start  # Enter game mode
+
+# Your room loads automatically!
+```
+
+### 4. Share Your Creation
+Just share your `rm_*.py` file. Other players drop it in their `rooms/` folder and it works!
+
+## Best Practices for Room Creation
+
+1. **Use Clear Names**: `rm_puzzle_vault.py` not `rm_pv.py`
+2. **Comment Your Code**: Others might want to learn from your puzzles
+3. **Test Thoroughly**: Make sure players can't get stuck
+4. **Be Creative**: The engine supports complex puzzles and storytelling
+5. **Have Fun**: This is about community creativity!
+
+## Example: Creating Your First Room
 
 ```python
+# rooms/rm_my_first_room.py
+from resources.room_utils import format_enter_lines, standard_commands, transition_to_room
+
 ROOM_CONFIG = {
-    "name": "Puzzle Room",
-    "entry_text": ["A locked door blocks your path."]
+    "name": "My First Room",
+    "entry_text": [
+        "You've created your first room!",
+        "A door leads north."
+    ]
 }
 
-PUZZLE_PATH = {
-    "use_key": {
-        "command": "use key",
-        "requires": ["has_key"],
-        "sets": "door_unlocked",
-        "success": ["The door unlocks!"]
-    }
-}
+def enter_room(game_state):
+    return format_enter_lines(ROOM_CONFIG["name"], ROOM_CONFIG["entry_text"])
+
+def handle_input(cmd, game_state, room_module=None):
+    if cmd.lower() == "go north":
+        return transition_to_room("next_room", ["You walk through the door..."])
+    
+    # Handle standard commands
+    result = standard_commands(cmd, game_state)
+    if result:
+        return None, result
+    
+    return None, ["Unknown command. Try 'go north'"]
+
+def get_available_commands():
+    return ["go north - proceed to the next room"]
 ```
 
-### OOP Room (Complex)
-
-```python
-class TimedPuzzleRoom(TimedPuzzleRoom):
-    def __init__(self):
-        timing_config = {
-            "duration": 60,
-            "fail_destination": "game_over"
-        }
-        super().__init__(config, timing_config)
-```
-
-## Performance Notes
-
-### Text-Based Advantages
-- No sprite rendering or collision detection
-- Focus on string operations and state management
-- Rooms use ~1-2KB of memory each
-- First load: ~5-10ms, subsequent: <1ms
-
-### Dictionary vs OOP Performance
-
-| Operation | Dictionary | OOP | Notes |
-|-----------|------------|-----|-------|
-| Load Time | ~5ms | ~8ms | OOP has instantiation overhead |
-| Memory | ~1KB | ~2KB | Class objects use more memory |
-| Flexibility | Medium | High | OOP allows complex patterns |
-
-## Best Practices
-
-1. **Choose the right style:**
-   - Dictionary for simple puzzles and story
-   - OOP for complex mechanics and state
-
-2. **Keep rooms focused:**
-   - One main puzzle per room
-   - Clear progression path
-   - Meaningful transitions
-
-3. **Use the state system:**
-   - Flags for boolean states
-   - Variables for complex data
-   - Inventory for items
-
-4. **Test thoroughly:**
-   - All paths should be completable
-   - Edge cases handled gracefully
-   - Clear feedback for players
+That's it! Save this file in `rooms/` and it's playable immediately.
 
 ## Conclusion
 
-This dual approach creates an ecosystem where anyone can contribute, from writers crafting narrative moments to programmers building complex puzzles. The modular design ensures that the community can extend and modify the game while maintaining a stable, professional core.
+The Basilisk ARG's architecture is designed to let you focus on what matters: **creating amazing content**. The engine handles all the complex stuff - you just write rooms and puzzles. Whether you're crafting a simple story room or a complex puzzle chamber, the tools are here to support your creativity.
 
-Whether you're editing your first dictionary or inheriting from BaseRoom, you're part of The Basilisk's evolution.
+Remember: **You only need the `rooms/` folder and `room_utils.py` to create content.** Everything else just makes it work.
 
 *The architecture is watching. Every room matters.*
