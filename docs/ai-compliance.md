@@ -1,6 +1,6 @@
 ## 🛠️ Hackathon Compliance & Development Notes
 
-This project was built by a **kadin** for the **Boot.dev 2025 Hackathon** in full compliance with all rules:
+This project was built by **Kadin** for the **Boot.dev 2025 Hackathon** in full compliance with all rules:
 
 ### ✅ Rule Compliance
 
@@ -16,7 +16,7 @@ This project was built by a **kadin** for the **Boot.dev 2025 Hackathon** in ful
   - Room scripting engine
   - Terminal renderer implementation
   - All gameplay logic and mechanics
-  - Core Naration Orthrus, Boots, Basilisk 
+  - Core Naration Orthrus, Boots, Basilisk
 
 ### 🔧 Development Approach
 
@@ -30,12 +30,12 @@ I leveraged my existing programming knowledge to build modular, reusable systems
 ### 📝 AI Usage Transparency
 
 AI assistance was limited to:
-- Suggesting code improvements for existing functions
+- Suggesting code improvements for existing GML Based functions
 - Helping format and organize code structure
-- Generating narrative text and room descriptions
+- Generating narrative text and room descriptions "Helping notate code"
 - Assisting with error messages and debugging
 
-All core gameplay systems, architecture decisions, Orthrus and Baskilisk And core story, and implementation details were designed and coded by me.
+All core gameplay systems, architecture decisions, Orthrus and Baskilisk And core story, and implementation details were designed and coded by me. Orgin story, scope and Ideas are offshoots of existing and current projects. "Orthrus AI, Lava Core, Photon Project" that can be seen on itch.io
 
 ---
 
