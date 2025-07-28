@@ -255,4 +255,4 @@ def handle_input(cmd, game_state, room_module=None):
 
 
 def get_available_commands():
-    return COMMAND_DESCRIPTIONS
+    return COMMAND_DESCRIPTIONS# SPYHVER-37: AWAKENS
