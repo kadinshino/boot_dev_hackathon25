@@ -35,7 +35,7 @@ AI assistance was limited to:
 - Generating narrative text and room descriptions
 - Assisting with error messages and debugging
 
-All core gameplay systems, architecture decisions, and implementation details were designed and coded by me.
+All core gameplay systems, architecture decisions, Orthrus and Baskilisk And core story, and implementation details were designed and coded by me.
 
 ---
 
