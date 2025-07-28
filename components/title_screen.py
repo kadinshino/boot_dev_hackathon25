@@ -336,3 +336,5 @@ class TitleScreen:
             return Colors.ICE_BLUE
         else:
             return Colors.TERMINAL_TEXT
+
+# SPYHVER-15: FRACTURED
