@@ -7,7 +7,7 @@ The Basilisk ARG is built with two core principles in mind: **accessibility for 
 ## Project Structure
 
 ```
-basilisk-arg/
+boot_dev_hackathon25/
 ├── main.py                 # Entry point - runs the game
 ├── config.py              # All configuration & constants
 ├── components/            # Core UI components (ignore for modding)
@@ -207,4 +207,5 @@ The Basilisk ARG's architecture is designed to let you focus on what matters: **
 Remember: **You only need the `rooms/` folder and `room_utils.py` to create content.** Everything else just makes it work.
 
 *The architecture is watching. Every room matters.*
-# SPYHVER-19: SHARDS.
+
+### SPYHVER-19: SHARDS.
