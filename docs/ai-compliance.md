@@ -1,44 +1,54 @@
-## 🛠️ Hackathon Compliance & Development Notes
+## ✅ AI Transparency & Compliance (Itch.io + Boot.dev)
 
-This project was built by **Kadin** for the **Boot.dev 2025 Hackathon** in full compliance with all rules:
-
-### ✅ Rule Compliance
-
-* **All code was written after the hackathon start time**
-* **AI tools were used only for:**
-  - Code formatting and refactoring
-  - Brainstorming ideas and small narrative elements
-  - Debugging assistance
-  - Documentation help
-* **I personally authored all core systems:**
-  - Game architecture and structure
-  - Navigation and state management
-  - Room scripting engine
-  - Terminal renderer implementation
-  - All gameplay logic and mechanics
-  - Core Naration Orthrus, Boots, Basilisk
-
-### 🔧 Development Approach
-
-I leveraged my existing programming knowledge to build modular, reusable systems:
-
-* **Custom room scripting engine** - Supports both dictionary and object-based room definitions
-* **Terminal simulation renderer** - Built from scratch using Pygame
-* **State management system** - Handles save/load and persistent game state
-* **Interaction framework** - Processes player commands and updates game world
-
-### 📝 AI Usage Transparency
-
-AI assistance was limited to:
-- Suggesting code improvements for existing GML Based functions
-- Helping format and organize code structure
-- Generating narrative text and room descriptions "Helping notate code"
-- Assisting with error messages and debugging
-
-All core gameplay systems, architecture decisions, Orthrus and Baskilisk And core story, and implementation details were designed and coded by me. Orgin story, scope and Ideas are offshoots of existing and current projects. "Orthrus AI, Lava Core, Photon Project" that can be seen on itch.io
+This project was developed by **Kadin** as a submission for the **Boot.dev 2025 Hackathon**, in full alignment with both the event guidelines and itch.io's transparency standards regarding AI-generated content.
 
 ---
 
-**Note:** This project represents original work created specifically for this hackathon, combining my programming skills with carefully scoped AI assistance for polish and refinement.
+### ✅ Rule Compliance
 
-# SPYHVER-18: LOST
+- **All code was written during the official hackathon window** – no pre-written code was reused.
+- **AI tools were utilized only in the following capacities:**
+  - Code formatting and refactoring suggestions  
+  - Brainstorming small narrative elements  
+  - Debugging assistance and error resolution  
+  - Documentation refinement and structure  
+- **All core systems were personally authored and implemented**, including:
+  - Modular game architecture and directory structure  
+  - Navigation and state management system  
+  - Custom room scripting engine (dictionary + object formats)  
+  - Terminal renderer built entirely in Pygame  
+  - All core gameplay mechanics and logic  
+  - Original narrative foundation: *Orthrus, Boots, Basilisk*
+
+---
+
+### 🔧 Development Methodology
+
+Leveraging my existing programming experience, I focused on building flexible, reusable systems from scratch:
+
+- 🧩 **Custom Room Scripting Engine** – Supports both config-style and code-driven rooms for modding flexibility  
+- 🖥️ **Terminal Simulation Renderer** – Designed and implemented in Pygame, simulating retro command-line aesthetics  
+- 💾 **State Management System** – Handles persistent flags, save/load structure, and branching narrative logic  
+- 🎮 **Interaction Framework** – Processes typed player commands and dynamically updates the in-game world  
+
+---
+
+### 🧠 AI Assistance Disclosure
+
+AI tools were used sparingly and in supportive roles only:
+
+- Refining formatting for functions originally based on GML architecture  
+- Structuring and organizing code for clarity and readability  
+- Suggesting room descriptions and thematic flavor text  
+- Debugging Python exceptions and documenting tricky segments  
+
+---
+
+All major design decisions, gameplay systems, story structure, and the *Basilisk Protocol* narrative—including the **Orthrus AI**, **Boots**, and **Lava Core** metaphors—are my original work. These elements draw inspiration from a lineage of personal and ongoing projects (*Orthrus AI*, *Photon Project*, *Lava Core*), viewable via my itch.io portfolio.
+
+---
+
+**Note:**  
+This project represents an original creation developed exclusively for the Boot.dev Hackathon. AI was employed solely to enhance clarity, speed up iteration, and polish existing ideas—not to replace creative or technical authorship.
+
+### SPYHVER-18: LOST
