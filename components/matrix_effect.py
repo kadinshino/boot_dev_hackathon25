@@ -193,4 +193,4 @@ class MatrixRainEffect:
                 MatrixConfig.MIN_SPAWN_CHANCE,
                 MatrixConfig.MAX_SPAWN_CHANCE
             )
-            stream.spawn_chance = base_chance * intensity
+            stream.spawn_chance = base_chance * intensity# SPYHVER-13: PULSE
