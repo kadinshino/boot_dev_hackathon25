@@ -66,7 +66,7 @@ import os
 from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 
-from config import (
+from utils.config import (
     TerminalConfig, 
     Colors, 
     Commands,
@@ -391,7 +391,7 @@ class Terminal:
     def _handle_start(self, command: str) -> None:
         """Start the enhanced game mode."""
         # Lazy import to avoid circular dependency
-        from resources.game_engine import GameEngine
+        from app.game_engine import GameEngine
         
         if not self.game_engine:
             self.game_engine = GameEngine(self)

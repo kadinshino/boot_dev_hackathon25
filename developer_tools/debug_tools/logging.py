@@ -15,7 +15,7 @@ from typing import Optional
 
 # Import from config - this assumes config.py exists
 try:
-    from config import LogConfig
+    from utils.config import LogConfig
 except ImportError:
     # Fallback configuration if config.py isn't available
     class LogConfig:

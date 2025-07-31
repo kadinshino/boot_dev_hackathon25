@@ -7,7 +7,7 @@ import pygame
 from typing import List
 from dataclasses import dataclass
 
-from config import MatrixConfig, Colors, FontConfig
+from utils.config import MatrixConfig, Colors, FontConfig
 
 
 @dataclass

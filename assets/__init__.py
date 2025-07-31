@@ -1,2 +1,0 @@
-
-# SPYHVER-09: ORTHRUS
