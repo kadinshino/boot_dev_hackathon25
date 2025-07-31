@@ -43,6 +43,7 @@ class GameState:
         self.game_flags: Dict[str, Any] = {}
         self.player_name: str = ""
         self.rooms: Dict[str, Any] = {}
+        self.debug_mode: bool = False  # Track if in debug mode
         
         # Store initial state for full reset
         self._initial_state = {
@@ -64,6 +65,7 @@ class GameState:
         self.current_room = self._initial_state['current_room']
         self.game_flags = self._initial_state['game_flags'].copy()
         self.player_name = self._initial_state['player_name']
+        self.debug_mode = False
 
     def _load_rooms(self) -> None:
         """Load all room modules from the rooms directory and subdirectories."""
@@ -368,13 +370,18 @@ class GameEngine:
         inventory_text = (', '.join(self.game_state.inventory) 
                          if self.game_state.inventory else 'Empty')
         
-        return [
+        status_lines = [
             "=== STATUS ===",
             f"Room: {self.game_state.current_room.title()}",
             f"Score: {self.game_state.score}",
             f"Health: {self.game_state.health}",
             f"Inventory: {inventory_text}"
         ]
+        
+        if self.game_state.debug_mode:
+            status_lines.append(f"Mode: DEBUG (Player: {self.game_state.player_name})")
+        
+        return status_lines
 
     def _process_room_command(self, command: str) -> List[str]:
         """Process room-specific commands."""
@@ -452,6 +459,13 @@ class GameEngine:
             room_help = self._get_room_help_text(current_room_module)
             lines.extend(room_help)
         
+        if self.game_state.debug_mode:
+            lines.extend([
+                "",
+                "=== DEBUG MODE ACTIVE ===",
+                "You are in DEBUG mode with unrestricted room access."
+            ])
+        
         return lines
 
     def _get_global_help_text(self) -> List[str]:
@@ -485,20 +499,6 @@ class GameEngine:
         except Exception as e:
             return [f"Error getting room commands: {str(e)}"]
 
-    def get_distance(self, room_a: str, room_b: str) -> int:
-            """Crude distance based on trailing room numbers (e.g. rm_beacon_1)"""
-            try:
-                return abs(int(room_a[-1]) - int(room_b[-1]))
-            except ValueError:
-                return 99  # Arbitrary large distance if format doesn't match
-
-    def unload_distant_rooms(self, current_room: str):
-        """Unload rooms more than 3 steps away"""
-        for room_name in list(self.loaded_rooms.keys()):
-            if self.get_distance(current_room, room_name) > 3:
-                print(f">> Unloading distant room: {room_name}")
-                del self.loaded_rooms[room_name]
-
     def enter_game_mode(self) -> List[str]:
         """Enter game mode and return initialization messages."""
         self.in_game_mode = True
@@ -519,6 +519,12 @@ class GameEngine:
     def exit_game_mode(self) -> List[str]:
         """Exit game mode and return cleanup messages."""
         self.in_game_mode = False
+        
+        # Clear debug mode if it was active
+        if self.game_state.debug_mode:
+            self.game_state.debug_mode = False
+            self.game_state.player_name = ""
+        
         return [
             "=== GAME MODE DEACTIVATED ===",
             "Returning to terminal mode...",

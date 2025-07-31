@@ -1,3 +1,59 @@
+# # #### Possible changes
+
+# # from enum import Enum
+# # from typing import Dict, Tuple
+
+# # class Theme(Enum):
+# #     WHITE_BOOT = "white_boot"
+# #     MATRIX_BLUE = "matrix_blue"
+# #     CYBER_RED = "cyber_red"
+# #     GLITCH_MODE = "glitch"
+# #     AWAKENING = "awakening"
+
+# # class ThemeColors:
+# #     """Color palettes for each theme."""
+    
+# #     WHITE_BOOT = {
+# #         'bg': (245, 245, 245),
+# #         'text': (20, 20, 20),
+# #         'terminal_bg': (255, 255, 255, 230),
+# #         'terminal_border': (180, 180, 180),
+# #         'terminal_text': (0, 0, 0),
+# #         'stream_primary': (220, 220, 220),
+# #         'stream_secondary': (180, 180, 180)
+# #     }
+    
+# #     MATRIX_BLUE = {
+# #         'bg': (0, 0, 0),
+# #         'text': (100, 200, 255),
+# #         'terminal_bg': (10, 15, 25, 180),
+# #         'terminal_border': (80, 150, 220),
+# #         'terminal_text': (150, 220, 255),
+# #         'stream_primary': (100, 200, 255),
+# #         'stream_secondary': (50, 120, 180)
+# #     }
+    
+# #     CYBER_RED = {
+# #         'bg': (15, 0, 0),
+# #         'text': (255, 68, 68),
+# #         'terminal_bg': (30, 10, 10, 200),
+# #         'terminal_border': (200, 50, 50),
+# #         'terminal_text': (255, 100, 100),
+# #         'stream_primary': (255, 68, 68),
+# #         'stream_secondary': (180, 40, 40)
+# #     }
+    
+# #     @classmethod
+# #     def get_palette(cls, theme: Theme) -> Dict[str, Tuple[int, ...]]:
+# #         """Get color palette for a specific theme."""
+# #         palettes = {
+# #             Theme.WHITE_BOOT: cls.WHITE_BOOT,
+# #             Theme.MATRIX_BLUE: cls.MATRIX_BLUE,
+# #             Theme.CYBER_RED: cls.CYBER_RED,
+# #         }
+# #         return palettes.get(theme, cls.MATRIX_BLUE)
+# # # SPYHVER-25: REALITY
+
 """
 Terminal component for The Basilisk Protocol.
 
@@ -6,6 +62,7 @@ and game mode transitions.
 """
 
 import pygame
+import os
 from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 
@@ -17,7 +74,6 @@ from config import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT
 )
-from resources.game_engine import GameEngine
 from utils.text_utils import wrap_text
 
 
@@ -50,11 +106,12 @@ class Terminal:
     Manages command input, output display, and transitions between
     normal and expanded (game) modes.
     """
-    
+        
     def __init__(self) -> None:
         """Initialize the terminal with default state."""
         self.state = TerminalState()
-        self.game_engine: Optional[GameEngine] = None
+        self.game_engine = None  # Will be initialized when entering game mode
+        self.debug_room_to_jump = None  # Store room to jump to in debug mode
         self._update_dimensions()
         
         # Command registry for cleaner command handling
@@ -72,6 +129,8 @@ class Terminal:
         # Add greeting command aliases
         for cmd in Commands.GREETING_COMMANDS:
             self._command_handlers[cmd] = self._handle_greeting
+
+
     
     @property
     def is_expanded(self) -> bool:
@@ -124,6 +183,10 @@ class Terminal:
         """Remove the last character from current input."""
         self.state.current_input = self.state.current_input[:-1]
     
+    def add_lines(self, lines: List[str]) -> None:
+        """Add multiple lines to the terminal output."""
+        self.state.add_lines(lines)
+    
     def execute_command(self) -> None:
         """Execute the current input as a command."""
         if self.state.current_input.strip():
@@ -140,6 +203,11 @@ class Terminal:
         # Echo the command
         self.state.add_line(f"> {command}")
         
+        # Check for debug commands first (simple implementation)
+        if command.lower().startswith("boot.debug"):
+            self._handle_debug_command(command)
+            return
+        
         # Normalize command
         cmd = command.lower().strip()
         
@@ -148,6 +216,111 @@ class Terminal:
             self._handle_game_mode_command(cmd)
         else:
             self._handle_normal_mode_command(cmd, command)
+    
+    def _handle_debug_command(self, command: str) -> None:
+        """Handle debug commands directly in terminal."""
+        cmd_parts = command.lower().strip().split()
+        
+        if len(cmd_parts) == 1:
+            # Just "boot.debug" - show menu
+            self.state.add_lines([
+                "=== DEBUG MODE ===",
+                "Available debug commands:",
+                "",
+                "boot.debug list       - List all available rooms",
+                "boot.debug jump <room> - Jump directly to a room",
+                "",
+                "Example: boot.debug jump beacon_1",
+                ""
+            ])
+        elif len(cmd_parts) >= 2:
+            action = cmd_parts[1]
+            
+            if action == "list":
+                self._list_available_rooms()
+            elif action == "jump" and len(cmd_parts) >= 3:
+                room_name = cmd_parts[2]
+                self._prepare_debug_jump(room_name)
+            else:
+                self.state.add_line(f"Unknown debug command: {action}")
+    
+    def _list_available_rooms(self) -> None:
+        """List all rooms in the rooms directory."""
+        rooms_dir = "rooms"
+        if not os.path.exists(rooms_dir):
+            self.state.add_lines(["No rooms directory found!"])
+            return
+        
+        self.state.add_lines([
+            "=== AVAILABLE ROOMS ===",
+            ""
+        ])
+        
+        # Walk through rooms directory
+        room_count = 0
+        for root, dirs, files in os.walk(rooms_dir):
+            # Skip __pycache__
+            dirs[:] = [d for d in dirs if not d.startswith('__')]
+            
+            for filename in files:
+                if filename.endswith(".py") and not filename.startswith("__"):
+                    room_name = filename[:-3]  # Remove .py
+                    if room_name.startswith("rm_"):
+                        room_name = room_name[3:]  # Remove rm_ prefix
+                    
+                    # Show with subdirectory if applicable
+                    rel_path = os.path.relpath(root, rooms_dir)
+                    if rel_path != ".":
+                        self.state.add_line(f"  {rel_path}/{room_name}")
+                    else:
+                        self.state.add_line(f"  {room_name}")
+                    room_count += 1
+        
+        self.state.add_lines([
+            "",
+            f"Total rooms: {room_count}",
+            "Use 'boot.debug jump <room_name>' to jump to any room."
+        ])
+    
+    def _prepare_debug_jump(self, room_name: str) -> None:
+        """Prepare to jump to a room in debug mode."""
+        # Check if room file exists (basic check)
+        rooms_dir = "rooms"
+        room_found = False
+        
+        # Check main directory and subdirectories
+        for root, dirs, files in os.walk(rooms_dir):
+            for filename in files:
+                if filename.endswith(".py"):
+                    check_name = filename[:-3]
+                    if check_name.startswith("rm_"):
+                        check_name = check_name[3:]
+                    
+                    if check_name == room_name:
+                        room_found = True
+                        break
+            if room_found:
+                break
+        
+        if not room_found:
+            self.state.add_lines([
+                f"Room '{room_name}' not found!",
+                "Use 'boot.debug list' to see available rooms."
+            ])
+            return
+        
+        # Store the room to jump to
+        self.debug_room_to_jump = room_name
+        
+        self.state.add_lines([
+            f"=== DEBUG JUMP PREPARED ===",
+            f"Room: {room_name}",
+            "Starting game in debug mode...",
+            ""
+        ])
+        
+        # Start game mode with debug flag
+        self._handle_start("start")
     
     def _handle_game_mode_command(self, cmd: str) -> None:
         """Handle commands when in expanded game mode."""
@@ -207,12 +380,42 @@ class Terminal:
     
     def _handle_start(self, command: str) -> None:
         """Start the enhanced game mode."""
+        # Lazy import to avoid circular dependency
+        from resources.game_engine import GameEngine
+        
         if not self.game_engine:
             self.game_engine = GameEngine(self)
         
         if not self.state.expanded:
             self.expand()
-            self.state.add_lines(self.game_engine.enter_game_mode())
+            
+            # Check if we're doing a debug jump
+            if self.debug_room_to_jump:
+                # Set debug mode in game state
+                self.game_engine.game_state.debug_mode = True
+                self.game_engine.game_state.player_name = "[DEBUG]"
+                self.game_engine.in_game_mode = True
+                
+                # Jump to the debug room
+                if self.game_engine.game_state.room_exists(self.debug_room_to_jump):
+                    self.game_engine.game_state.change_room(self.debug_room_to_jump)
+                    self.state.add_lines([
+                        f"=== DEBUG MODE ACTIVE ===",
+                        f"Player: [DEBUG]",
+                        f"Jumped to room: {self.debug_room_to_jump}",
+                        ""
+                    ])
+                    # Get room entry text
+                    room_entry = self.game_engine._execute_room_entry()
+                    self.state.add_lines(room_entry)
+                else:
+                    self.state.add_line(f"Error: Room '{self.debug_room_to_jump}' not found in game engine!")
+                
+                # Clear the debug jump flag
+                self.debug_room_to_jump = None
+            else:
+                # Normal game start
+                self.state.add_lines(self.game_engine.enter_game_mode())
         else:
             self.state.add_line("Game mode already active!")
     

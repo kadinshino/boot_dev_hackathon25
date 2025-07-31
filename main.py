@@ -129,9 +129,19 @@ class BasiliskProtocol:
             if self.title_screen.update():
                 # Transition from boot sequence to main game
                 self.show_title_screen = False
+                
+                # Check if debug mode was requested
+                if hasattr(self.title_screen.state, 'debug_mode_requested') and self.title_screen.state.debug_mode_requested:
+                    # Enter debug mode directly
+                    self.terminal.add_lines([
+                        "=== DEBUG MODE ENTRY ===",
+                        "Skipping boot sequence...",
+                        "Type 'boot.debug' for debug options",
+                        ""
+                    ])
         else:
             self.terminal.update()
-    
+
     def draw(self) -> None:
         """Render all game components."""
         self.screen.fill(Colors.BLACK)

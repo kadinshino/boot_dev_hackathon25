@@ -22,10 +22,12 @@ from config import (
     SCREEN_HEIGHT
 )
 
-
 @dataclass
 class TitleScreenState:
     """Encapsulates the state of the title screen."""
+    # Fields without defaults would go here (but we don't have any)
+    
+    # Fields with defaults
     active: bool = True
     pulse_phase: float = 0.0
     current_message_index: int = 0
@@ -38,8 +40,8 @@ class TitleScreenState:
     boot_sequence_active: bool = False
     boot_sequence_index: int = 0
     boot_sequence_timer: int = 0
-    boot_lines: List[str] = field(default_factory=list)
-
+    debug_mode_requested: bool = False
+    boot_lines: List[str] = field(default_factory=list)  # This must come last
 
 class TitleScreen:
     """
@@ -155,16 +157,22 @@ class TitleScreen:
         Handle enter key press.
         
         Returns:
-            True if the boot sequence should start
+            True if the boot sequence should start or skip to terminal
         """
-        if self.state.input_text.lower().strip() == "boot.dev":
+        command = self.state.input_text.lower().strip()
+        
+        if command == "boot.dev":
             self.state.boot_sequence_active = True
             return False  # Don't transition yet, show boot sequence first
+        elif command == "boot.debug":
+            # Skip boot sequence and go straight to terminal for debug mode
+            self.state.debug_mode_requested = True
+            return True  # Immediately transition to terminal
         
         # Clear input if wrong command
         self.state.input_text = ""
         return False
-    
+
     def draw(self, surface: pygame.Surface) -> None:
         """
         Draw the title screen.
