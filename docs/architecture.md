@@ -7,27 +7,77 @@ The Basilisk ARG is built with two core principles in mind: **accessibility for 
 ## Project Structure
 
 ```
-boot_dev_hackathon25/
-├── main.py                 # Entry point - runs the game
-├── config.py              # All configuration & constants
-├── components/            # Core UI components (ignore for modding)
-│   ├── matrix_effect.py   # Matrix rain background
-│   ├── terminal.py        # Terminal interface
-│   └── title_screen.py    # Title screen & boot sequence
-├── resources/             # Game engine & utilities
-│   ├── game_engine.py     # Core game logic (rarely modified)
-│   ├── room_utils.py      # Room development tools (important!)
-│   └── terminal_themes.py # Visual themes
-├── rooms/                 # 🎮 YOUR CONTENT GOES HERE! 🎮
-│   ├── rm_boot.py        # Starting room
-│   ├── rm_beacon_*.py    # Beacon path rooms
-│   ├── rm_whisper_*.py   # Whisper path rooms
-│   └── rm_template_*.py  # Templates for new rooms
-└── utils/                # Helper utilities (ignore for modding)
-    ├── file_cleanup.py   # File system tools
-    ├── text_utils.py     # Text processing
-    ├── logging.py        # Debug logging
-    └── performance.py    # Performance monitoring
+├── LICENSE.md
+├── README.md
+├── app
+│   └── __init__.py
+├── components
+│   ├── __init__.py
+│   ├── data_rain_effect.py
+│   ├── terminal.py
+│   └── title_screen.py
+├── developer_tools
+│   ├── debug_tools
+│   │   ├── index.py
+│   │   ├── logging.py
+│   │   └── performance.py
+│   ├── dev_tool_notes.md
+│   ├── game_compiler
+│   │   ├── distribution_notes.md
+│   │   ├── requirements.txt
+│   │   └── windows_builder
+│   │       ├── build.bat
+│   │       └── build_guide.md
+│   ├── spyher_tools
+│   │   ├── build_spyhver.py
+│   │   ├── encode_spyhver.py
+│   │   ├── extract_spyhver.sh
+│   │   ├── structure_spyhver.py
+│   │   └── test script.py
+│   └── store_assets
+│       ├── STORE_PAGE.md
+│       ├── screenshot_01.png
+│       └── screenshot_02.png
+├── docs
+│   ├── ai-compliance.md
+│   ├── architecture.md
+│   ├── puzzle-patterns.md
+│   └── room-development.md
+├── main.py
+├── resources
+│   ├── __init__.py
+│   └── game_engine.py
+├── rooms
+│   ├── __init__.py
+│   ├── beacons_oop
+│   │   ├── __init__.py
+│   │   ├── rm_beacon_1.py
+│   │   ├── rm_beacon_2.py
+│   │   ├── rm_beacon_3.py
+│   │   ├── rm_beacon_4.py
+│   │   ├── rm_beacon_5.py
+│   │   └── rm_beacon_convergence.py
+│   ├── customs_args
+│   │   ├── __init__.py
+│   │   ├── rm_custom_entry.py
+│   │   ├── rm_template_dict_demo.py
+│   │   └── rm_template_oop_demo.py
+│   ├── rm_boot_entry.py
+│   └── whispers_dict
+│       ├── __init__.py
+│       ├── rm_whisper_1.py
+│       ├── rm_whisper_2.py
+│       ├── rm_whisper_3.py
+│       ├── rm_whisper_4.py
+│       ├── rm_whisper_5.py
+│       └── rm_whisper_awaken.py
+└── utils
+    ├── .gitignore
+    ├── __init__.py
+    ├── file_cleanup.py
+    ├── game_config.py
+    ├── room_utils.py
+    └── text_utils.py
 ```
 
 ## Quick Start for Content Creators

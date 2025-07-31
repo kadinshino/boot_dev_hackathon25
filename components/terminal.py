@@ -1,59 +1,3 @@
-# # #### Possible changes
-
-# # from enum import Enum
-# # from typing import Dict, Tuple
-
-# # class Theme(Enum):
-# #     WHITE_BOOT = "white_boot"
-# #     MATRIX_BLUE = "matrix_blue"
-# #     CYBER_RED = "cyber_red"
-# #     GLITCH_MODE = "glitch"
-# #     AWAKENING = "awakening"
-
-# # class ThemeColors:
-# #     """Color palettes for each theme."""
-    
-# #     WHITE_BOOT = {
-# #         'bg': (245, 245, 245),
-# #         'text': (20, 20, 20),
-# #         'terminal_bg': (255, 255, 255, 230),
-# #         'terminal_border': (180, 180, 180),
-# #         'terminal_text': (0, 0, 0),
-# #         'stream_primary': (220, 220, 220),
-# #         'stream_secondary': (180, 180, 180)
-# #     }
-    
-# #     MATRIX_BLUE = {
-# #         'bg': (0, 0, 0),
-# #         'text': (100, 200, 255),
-# #         'terminal_bg': (10, 15, 25, 180),
-# #         'terminal_border': (80, 150, 220),
-# #         'terminal_text': (150, 220, 255),
-# #         'stream_primary': (100, 200, 255),
-# #         'stream_secondary': (50, 120, 180)
-# #     }
-    
-# #     CYBER_RED = {
-# #         'bg': (15, 0, 0),
-# #         'text': (255, 68, 68),
-# #         'terminal_bg': (30, 10, 10, 200),
-# #         'terminal_border': (200, 50, 50),
-# #         'terminal_text': (255, 100, 100),
-# #         'stream_primary': (255, 68, 68),
-# #         'stream_secondary': (180, 40, 40)
-# #     }
-    
-# #     @classmethod
-# #     def get_palette(cls, theme: Theme) -> Dict[str, Tuple[int, ...]]:
-# #         """Get color palette for a specific theme."""
-# #         palettes = {
-# #             Theme.WHITE_BOOT: cls.WHITE_BOOT,
-# #             Theme.MATRIX_BLUE: cls.MATRIX_BLUE,
-# #             Theme.CYBER_RED: cls.CYBER_RED,
-# #         }
-# #         return palettes.get(theme, cls.MATRIX_BLUE)
-# # # SPYHVER-25: REALITY
-
 """
 Terminal component for The Basilisk Protocol.
 
@@ -75,7 +19,7 @@ from utils.game_config import (
     SCREEN_HEIGHT
 )
 from utils.text_utils import wrap_text
-
+from utils.theme import Theme, ThemeColors
 
 @dataclass
 class TerminalState:
@@ -98,26 +42,25 @@ class TerminalState:
         """Clear the terminal output."""
         self.lines = ["Terminal cleared.", ""]
 
+from utils.theme import Theme, ThemeColors  # Make sure this is at the top of your file
 
 class Terminal:
-    """
-    Interactive terminal interface for the game.
-    
-    Manages command input, output display, and transitions between
-    normal and expanded (game) modes.
-    """
-        
     def __init__(self) -> None:
         """Initialize the terminal with default state."""
+        # Core state
         self.state = TerminalState()
-        self.game_engine = None  # Will be initialized when entering game mode
-        self.debug_room_to_jump = None  # Store room to jump to in debug mode
-        self.debug_mode_active = False  # ADD THIS LINE
+        self.game_engine = None
+        self.debug_room_to_jump = None
+        self.debug_mode_active = False
 
+        # 🎨 Initialize theme system
+        self.current_theme = Theme.MATRIX_BLUE
+        self.palette = ThemeColors.get_palette(self.current_theme)
 
+        # 📐 Calculate dimensions
         self._update_dimensions()
-        
-        # Command registry for cleaner command handling
+
+        # 💬 Command registry
         self._command_handlers = {
             Commands.HELP: self._handle_help,
             Commands.CLEAR: self._handle_clear,
@@ -127,12 +70,12 @@ class Terminal:
             Commands.START: self._handle_start,
             Commands.STOP: self._handle_stop,
             Commands.MINIMIZE: self._handle_stop,
+            "theme": self._handle_theme_command  # NEW: Theme switching support
         }
-        
-        # Add greeting command aliases
+
+        # 👋 Greeting aliases
         for cmd in Commands.GREETING_COMMANDS:
             self._command_handlers[cmd] = self._handle_greeting
-
 
     
     @property
@@ -140,6 +83,27 @@ class Terminal:
         """Check if terminal is in expanded mode."""
         return self.state.expanded
     
+
+    def set_theme(self, theme_name: str):
+        """Update terminal color theme dynamically."""
+        try:
+            theme = Theme(theme_name.lower())
+            self.current_theme = theme
+            self.palette = ThemeColors.get_palette(theme)
+            self.state.add_line(f"Theme set to {theme.value}")
+        except ValueError:
+            self.state.add_line(f"Unknown theme: {theme_name}")
+
+    def _handle_theme_command(self, command: str):
+        """Change terminal theme. Usage: theme <white_boot|matrix_blue|cyber_red>"""
+        parts = command.strip().split()
+        if len(parts) != 2:
+            self.state.add_line("Usage: theme <white_boot|matrix_blue|cyber_red>")
+            return
+        self.set_theme(parts[1])
+
+
+
     def _update_dimensions(self) -> None:
         """Calculate terminal dimensions based on current mode."""
         cfg = TerminalConfig
@@ -469,34 +433,37 @@ class Terminal:
     def _create_terminal_surface(self) -> pygame.Surface:
         """Create the base terminal surface with background."""
         terminal_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        terminal_surface.fill(Colors.TERMINAL_BG)
-        
-        # Draw border
+        terminal_surface.fill(self.palette['terminal_bg'])
+
         pygame.draw.rect(
-            terminal_surface, 
-            Colors.TERMINAL_BORDER, 
-            (0, 0, self.width, self.height), 
+            terminal_surface,
+            self.palette['terminal_border'],
+            (0, 0, self.width, self.height),
             TerminalConfig.BORDER_WIDTH
         )
-        
-        return terminal_surface
+
+        return terminal_surface  # ✅ MUST return this
+
     
     def _draw_title_bar(self, surface: pygame.Surface, font: pygame.font.Font) -> None:
         """Draw the terminal title bar."""
         # Title bar background
         pygame.draw.rect(
-            surface, 
-            Colors.TERMINAL_BORDER, 
+            surface,
+            self.palette['terminal_border'],
             (0, 0, self.width, TerminalConfig.TITLE_BAR_HEIGHT)
         )
-        
-        # Title text
+
+        # ✅ Define the title BEFORE trying to render it
         title = "TERMINAL v2.1" + (" - GAME MODE" if self.state.expanded else "")
-        title_surface = font.render(title, True, Colors.BLACK)
+
+        # Title text
+        title_surface = font.render(title, True, self.palette['text'])
         surface.blit(
-            title_surface, 
+            title_surface,
             (TerminalConfig.TITLE_MARGIN, TerminalConfig.TITLE_Y_OFFSET)
         )
+
     
     def _draw_content(self, surface: pygame.Surface, font: pygame.font.Font) -> None:
         """Draw the terminal content lines."""
