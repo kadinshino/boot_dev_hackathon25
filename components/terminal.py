@@ -391,7 +391,7 @@ class Terminal:
     def _handle_start(self, command: str) -> None:
         """Start the enhanced game mode."""
         # Lazy import to avoid circular dependency
-        from app.game_engine import GameEngine
+        from resources.game_engine import GameEngine
         
         if not self.game_engine:
             self.game_engine = GameEngine(self)
