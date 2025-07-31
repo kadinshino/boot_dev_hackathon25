@@ -11,7 +11,7 @@ from config import (
     Colors,
     FontConfig
 )
-from components.matrix_effect import MatrixRainEffect
+from components.data_rain_effect import DataRainEffect
 from components.terminal import Terminal
 from components.title_screen import TitleScreen
 from utils.file_cleanup import clean_pycache
@@ -68,7 +68,7 @@ class BasiliskProtocol:
     
     def _setup_components(self) -> None:
         """Initialize game components."""
-        self.matrix_effect = MatrixRainEffect(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.matrix_effect = DataRainEffect(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.terminal = Terminal()
         self.title_screen = TitleScreen(self.screen, self.fonts)
     

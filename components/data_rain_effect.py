@@ -1,7 +1,5 @@
 """
-Matrix rain effect component for The Basilisk Protocol.
-
-This module handles the iconic falling character effect in the background.
+Digital glyph fall effect component for The Basilisk Protocol.
 """
 
 import random
@@ -13,81 +11,80 @@ from config import MatrixConfig, Colors, FontConfig
 
 
 @dataclass
-class MatrixCharacter:
-    """Represents a single character in a matrix stream."""
+class GlyphTrail:
+    """Represents a single falling glyph in a data stream."""
     y: float
     char: str
     age: int
 
 
-class MatrixStream:
+class DataStream:
     """
-    Manages a single vertical stream of falling characters.
-    
-    Each stream has its own speed and spawn rate, creating
-    a varied and organic-looking effect.
+    Manages a single vertical stream of falling glyphs.
+
+    Each stream has its own behavior to simulate an organic,
+    AI-generated visualization or memory leak.
     """
-    
+
     def __init__(self, x: int) -> None:
         """
-        Initialize a matrix stream at the given x coordinate.
-        
+        Initialize a data stream at the given x-coordinate.
+
         Args:
             x: The horizontal position of this stream
         """
         self.x = x
-        self.characters: List[MatrixCharacter] = []
+        self.characters: List[GlyphTrail] = []
         self.speed = random.randint(MatrixConfig.MIN_SPEED, MatrixConfig.MAX_SPEED)
         self.spawn_chance = random.uniform(
             MatrixConfig.MIN_SPAWN_CHANCE, 
             MatrixConfig.MAX_SPAWN_CHANCE
         )
-    
+
     def update(self) -> None:
-        """Update the stream's characters for one frame."""
+        """Update the stream's glyphs for one frame."""
         self._spawn_new_character()
         self._update_existing_characters()
         self._remove_old_characters()
-    
+
     def _spawn_new_character(self) -> None:
-        """Attempt to spawn a new character at the top of the stream."""
+        """Randomly generate a new glyph at the top of the stream."""
         can_spawn = (
             random.random() < self.spawn_chance and 
             len(self.characters) < MatrixConfig.MAX_CHARS_PER_STREAM
         )
-        
+
         if can_spawn:
-            new_char = MatrixCharacter(
+            new_char = GlyphTrail(
                 y=-FontConfig.STREAM_FONT_SIZE,
                 char=random.choice(MatrixConfig.CHARACTER_SET),
                 age=0
             )
             self.characters.append(new_char)
-    
+
     def _update_existing_characters(self) -> None:
-        """Update position and appearance of existing characters."""
+        """Update position and behavior of falling glyphs."""
         for char in self.characters:
-            # Move character down
             char.y += self.speed
             char.age += 1
-            
-            # Occasionally change the character for flicker effect
+
+            # Flicker / mutation simulation
             if random.random() < MatrixConfig.FLICKER_CHANCE:
                 char.char = random.choice(MatrixConfig.CHARACTER_SET)
-    
+
     def _remove_old_characters(self) -> None:
-        """Remove characters that have moved off screen."""
+        """Remove glyphs that fall outside the visible screen."""
         screen_bottom = pygame.display.get_surface().get_height()
         max_y = screen_bottom + FontConfig.STREAM_FONT_SIZE
         self.characters = [char for char in self.characters if char.y < max_y]
-    
+
     def draw(self, surface: pygame.Surface, font: pygame.font.Font) -> None:
         """
-        Draw all visible characters in the stream.
-        
+        Render all glyphs in this stream onto the display.
+
         Args:
             surface: The surface to draw on
-            font: The font to use for rendering characters
+            font: The font used to render glyphs
         """
         for i, char in enumerate(self.characters):
             if self._is_character_visible(char, surface.get_height()):
@@ -95,100 +92,95 @@ class MatrixStream:
                 text = font.render(char.char, True, color)
                 text.set_alpha(alpha)
                 surface.blit(text, (self.x, char.y))
-    
-    def _is_character_visible(self, char: MatrixCharacter, screen_height: int) -> bool:
-        """Check if a character is within the visible screen area."""
+
+    def _is_character_visible(self, char: GlyphTrail, screen_height: int) -> bool:
+        """Check if a glyph is within the screen's visible range."""
         return 0 <= char.y < screen_height
-    
+
     def _get_character_appearance(self, index: int) -> tuple:
         """
-        Calculate color and alpha for a character based on its position.
-        
+        Determine color and transparency for a glyph based on depth.
+
         Args:
-            index: The character's position in the stream
-            
+            index: Index of the glyph in the stream
         Returns:
-            Tuple of (color, alpha) values
+            Tuple of (color, alpha)
         """
-        # Head of stream is brightest
         if index == 0:
             return Colors.ICE_BLUE, 255
-        
-        # Calculate fade based on position
+
         fade_factor = max(0, 1 - (index / MatrixConfig.FADE_LENGTH))
         alpha = int(255 * fade_factor)
-        
-        # Bright characters near head, darker ones trailing
+
         color = (Colors.ICE_BLUE if index <= MatrixConfig.BRIGHT_HEAD_COUNT 
-                else Colors.DARK_ICE_BLUE)
-        
+                 else Colors.DARK_ICE_BLUE)
+
         return color, alpha
-    
+
     def clear(self) -> None:
-        """Clear all characters from this stream."""
+        """Remove all glyphs from this stream."""
         self.characters.clear()
 
 
-class MatrixRainEffect:
+class DataRainEffect:
     """
-    Manages the complete matrix rain effect across the screen.
-    
-    Creates and manages multiple streams to fill the display with
-    falling characters.
+    Orchestrates the full-screen digital glyphfall effect.
+
+    Simulates an AI's visual output, memory cascade, or signal leak
+    across vertical trails of glyphs.
     """
-    
+
     def __init__(self, screen_width: int, screen_height: int) -> None:
         """
-        Initialize the matrix rain effect.
-        
+        Initialize the glyphfall display effect.
+
         Args:
-            screen_width: Width of the display area
-            screen_height: Height of the display area
+            screen_width: Width of the display
+            screen_height: Height of the display
         """
         self.screen_width = screen_width
         self.screen_height = screen_height
         self._initialize_streams()
-    
+
     def _initialize_streams(self) -> None:
-        """Create streams across the width of the screen."""
+        """Distribute glyph streams across the screen width."""
         stream_spacing = FontConfig.STREAM_FONT_SIZE
         self.streams = [
-            MatrixStream(x) 
+            DataStream(x) 
             for x in range(0, self.screen_width, stream_spacing)
         ]
-    
+
     def update(self) -> None:
-        """Update all streams for one frame."""
+        """Advance all glyph streams by one frame."""
         for stream in self.streams:
             stream.update()
-    
+
     def draw(self, surface: pygame.Surface, font: pygame.font.Font) -> None:
         """
-        Draw all streams to the given surface.
-        
+        Render the entire glyphfall effect to screen.
+
         Args:
-            surface: The surface to draw on
-            font: The font to use for rendering
+            surface: Surface to render to
+            font: Font used for glyphs
         """
         for stream in self.streams:
             stream.draw(surface, font)
-    
+
     def clear_all_streams(self) -> None:
-        """Clear all characters from all streams."""
+        """Clear all glyphs from every stream."""
         for stream in self.streams:
             stream.clear()
-    
+
     def set_intensity(self, intensity: float) -> None:
         """
-        Adjust the intensity of the effect.
-        
+        Adjust the glyphfall intensity.
+
         Args:
-            intensity: Value between 0.0 and 1.0
+            intensity: Value from 0.0 (off) to 1.0 (max density)
         """
         intensity = max(0.0, min(1.0, intensity))
-        
+
         for stream in self.streams:
-            # Adjust spawn chance based on intensity
             base_chance = random.uniform(
                 MatrixConfig.MIN_SPAWN_CHANCE,
                 MatrixConfig.MAX_SPAWN_CHANCE
