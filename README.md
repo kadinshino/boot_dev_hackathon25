@@ -100,48 +100,50 @@ python main.py
 The codebase is organized for clarity and modularity:
 
 ```
-├── main.py                        # Entry point for launching the game
-├── LICENSE.md                    # Licensing information and usage terms
-├── README.md                     # Project overview, setup, and instructions
+├── main.py                   # Entry point for launching the game
+├── LICENSE.md                # Licensing information and usage terms
+├── README.md                 # Project overview, setup, and instructions
 |
-├── components/                   # Visual and UI elements rendered via Pygame
-│   ├── __init__.py              # Marks this as a package
-│   ├── data_rain_effect.py      # Matrix-style falling glyph effect
-│   ├── terminal.py              # Terminal window and text rendering logic
-│   └── title_screen.py          # Title screen UI and intro effects
+├── components/               # Visual and UI elements rendered via Pygame
+│   ├── __init__.py           # Marks this as a package
+│   ├── data_rain_effect.py   # Matrix-style falling glyph effect
+│   ├── terminal.py           # Terminal window and text rendering logic
+│   └── title_screen.py       # Title screen UI and intro effects
 |
-├── docs/                         # Internal documentation for development
-│   ├── ai-compliance.md         # AI usage statement for hackathon submission
-│   ├── architecture.md          # Design philosophy and system breakdown
-│   ├── puzzle-patterns.md       # Common puzzle types and how to build them
-│   └── room-development.md      # Detailed guide to building game rooms
+├── docs/                     # Internal documentation for development
+│   ├── ai-compliance.md      # AI usage statement for hackathon submission
+│   ├── architecture.md       # Design philosophy and system breakdown
+│   ├── puzzle-patterns.md    # Common puzzle types and how to build them
+│   └── room-development.md   # Detailed guide to building game rooms
 |
-├── resources/                    # Core engine logic and base systems
-│   ├── __init__.py              # Marks this as a package
-│   └── game_engine.py           # Manages game loop, state, and room loading
+├── resources/                # Core engine logic and base systems
+│   ├── __init__.py           # Marks this as a package
+│   └── game_engine.py        # Manages game loop, state, and room loading
 |
-├── rooms/                        # All interactive game content is stored here
-│   ├── __init__.py              # Marks this as a package
-│   ├── beacons_oop/             # Beacon protocol path rooms (OOP style)
-│   │   ├── __init__.py          # Init for beacon path package
-│   │   ├── rm_beacon_1.py       # First Beacon protocol room (OOP template)
-│   ├── customs_args/            # Optional custom entries for demo/alt paths
-│   │   ├── __init__.py          # Init for custom args package
+├── rooms/                    # All interactive game content is stored here
+│   ├── __init__.py           # Marks this as a package
+│   ├── beacons_oop/          # Beacon protocol path rooms (OOP style)
+│   │   ├── __init__.py       # Init for beacon path package
+│   │   ├── rm_beacon_1.py    # First Beacon protocol room (OOP template)
+|   |   
+│   ├── customs_args/         # Optional custom entries for demo/alt paths
+│   │   ├── __init__.py       # Init for custom args package
 │   │   ├── rm_custom_entry.py   # Custom entry point for user-loaded paths
-│   │   ├── rm_template_dict_demo.py  # Demo room using dictionary-based layout
-│   │   └── rm_template_oop_demo.py   # Demo room using object-oriented layout
-│   ├── rm_boot_entry.py         # Initial shared room to choose protocol path
-│   └── whispers_dict/           # Whisper protocol path rooms (dict style)
-│       ├── __init__.py          # Init for whisper path package
-│       ├── rm_whisper_1.py      # First Whisper protocol room (dict template)
+│   │   ├── rm_template_dict_demo.py  # Demo room dictionary-based layout
+│   │   └── rm_template_oop_demo.py   # Demo room object-oriented layout
+|   |
+│   ├── rm_boot_entry.py      # Initial shared room to choose protocol path
+│   └── whispers_dict/        # Whisper protocol path rooms (dict style)
+│       ├── __init__.py       # Init for whisper path package
+│       ├── rm_whisper_1.py   # First Whisper protocol room (dict template)
 |
-└── utils/                        # Shared helpers and utilities
-    ├── .gitignore               # Git exclusions for this subpackage
-    ├── __init__.py              # Marks this as a package
-    ├── file_cleanup.py          # Utility for removing temp or junk files
-    ├── game_config.py           # Configurable parameters for tuning gameplay
-    ├── room_utils.py            # Shared tools for room behavior and formatting
-    └── text_utils.py            # String handling, text corruption, etc.
+└── utils/                    # Shared helpers and utilities
+    ├── .gitignore            # Git exclusions for this subpackage
+    ├── __init__.py           # Marks this as a package
+    ├── file_cleanup.py       # Utility for removing temp or junk files
+    ├── game_config.py        # Configurable parameters for tuning gameplay
+    ├── room_utils.py         # Shared tools for room behavior and formatting
+    └── text_utils.py         # String handling, text corruption, etc.
 ```
 
 ---
