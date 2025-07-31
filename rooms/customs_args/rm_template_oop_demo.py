@@ -23,7 +23,7 @@ STRUCTURE OVERVIEW:
 6. Add module-level compatibility functions
 """
 
-from resources.room_utils import (
+from utils.room_utils import (
     BaseRoom,           # Base class for all rooms
     TimedPuzzleRoom,    # Base class for rooms with timers
     RoomConfig,         # Configuration dataclass

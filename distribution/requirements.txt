@@ -1,5 +1,4 @@
 # requirements.txt
 pygame==2.5.2
 
-
 # SPYHVER-06: STATIC

@@ -1,4 +1,4 @@
-from resources.room_utils import (
+from utils.room_utils import (
     BaseRoom, RoomConfig, PuzzleCommand
 )
 

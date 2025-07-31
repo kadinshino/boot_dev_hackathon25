@@ -132,13 +132,20 @@ class BasiliskProtocol:
                 
                 # Check if debug mode was requested
                 if hasattr(self.title_screen.state, 'debug_mode_requested') and self.title_screen.state.debug_mode_requested:
-                    # Enter debug mode directly
-                    self.terminal.add_lines([
-                        "=== DEBUG MODE ENTRY ===",
-                        "Skipping boot sequence...",
-                        "Type 'boot.debug' for debug options",
+                    # Completely reset terminal lines for debug mode
+                    self.terminal.state.lines = []  # Clear ALL lines including default boot sequence
+                    self.terminal.state.add_lines([
+                        "=== DEBUG MODE ===",
+                        "Available debug commands:",
+                        "",
+                        "boot.debug list       - List all available rooms",
+                        "boot.debug jump <room> - Jump directly to a room",
+                        "",
+                        "Example: boot.debug jump beacon_1",
                         ""
                     ])
+                    # Set a flag so terminal knows we're in debug mode
+                    self.terminal.debug_mode_active = True
         else:
             self.terminal.update()
 

@@ -1,5 +1,5 @@
 import time
-from resources.room_utils import (
+from utils.room_utils import (
     TimedPuzzleRoom, RoomConfig, PuzzleCommand
 )
 

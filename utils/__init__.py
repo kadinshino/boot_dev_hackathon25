@@ -8,8 +8,8 @@ text processing, logging, and performance monitoring.
 
 from .file_cleanup import clean_pycache, clean_temp_files
 from .text_utils import wrap_text, truncate_text, sanitize_input
-from .logging import logger, setup_logging
-from .performance import PerformanceMonitor
+# from .logging import logger, setup_logging
+# from ..developer_tools.performance import PerformanceMonitor
 
 __all__ = [
     'clean_pycache',

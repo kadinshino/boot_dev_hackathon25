@@ -7,7 +7,7 @@ Handles:
 - Routes into whisper_1, beacon_1, or custom_entry
 """
 
-from resources.room_utils import format_enter_lines, transition_to_room
+from utils.room_utils import format_enter_lines, transition_to_room
 
 # =============================
 # Constants

@@ -112,6 +112,9 @@ class Terminal:
         self.state = TerminalState()
         self.game_engine = None  # Will be initialized when entering game mode
         self.debug_room_to_jump = None  # Store room to jump to in debug mode
+        self.debug_mode_active = False  # ADD THIS LINE
+
+
         self._update_dimensions()
         
         # Command registry for cleaner command handling
@@ -206,8 +209,13 @@ class Terminal:
         # Check for debug commands first (simple implementation)
         if command.lower().startswith("boot.debug"):
             self._handle_debug_command(command)
+            self.debug_mode_active = False  # Reset flag after first use
             return
         
+        if command.lower().startswith("boot.debug"):
+            self._handle_debug_command(command)
+            return
+
         # Normalize command
         cmd = command.lower().strip()
         
@@ -312,10 +320,12 @@ class Terminal:
         # Store the room to jump to
         self.debug_room_to_jump = room_name
         
+        # Clear terminal for debug jump
+        self.state.lines = []  # Clear all lines
         self.state.add_lines([
-            f"=== DEBUG JUMP PREPARED ===",
-            f"Room: {room_name}",
-            "Starting game in debug mode...",
+            f"=== DEBUG JUMP: {room_name.upper()} ===",
+            f"Player: [DEBUG]",
+            f"Room loaded. Type 'help' for available commands.",
             ""
         ])
         
@@ -399,15 +409,7 @@ class Terminal:
                 # Jump to the debug room
                 if self.game_engine.game_state.room_exists(self.debug_room_to_jump):
                     self.game_engine.game_state.change_room(self.debug_room_to_jump)
-                    self.state.add_lines([
-                        f"=== DEBUG MODE ACTIVE ===",
-                        f"Player: [DEBUG]",
-                        f"Jumped to room: {self.debug_room_to_jump}",
-                        ""
-                    ])
-                    # Get room entry text
-                    room_entry = self.game_engine._execute_room_entry()
-                    self.state.add_lines(room_entry)
+                    # Don't show room entry text - we already showed debug info
                 else:
                     self.state.add_line(f"Error: Room '{self.debug_room_to_jump}' not found in game engine!")
                 

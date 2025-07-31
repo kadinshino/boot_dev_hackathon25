@@ -1,4 +1,4 @@
-from resources.room_utils import format_enter_lines, standard_commands, transition_to_room
+from utils.room_utils import format_enter_lines, standard_commands, transition_to_room
 import random
 
 # ============================================================================

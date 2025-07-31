@@ -5,7 +5,7 @@ Lets users explore template demos or auto-run first valid custom room
 """
 
 import os
-from resources.room_utils import format_enter_lines, transition_to_room
+from utils.room_utils import format_enter_lines, transition_to_room
 
 # Constants
 ROOMS_DIR = "rooms"
