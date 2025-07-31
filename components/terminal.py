@@ -66,7 +66,7 @@ import os
 from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 
-from utils.config import (
+from utils.game_config import (
     TerminalConfig, 
     Colors, 
     Commands,

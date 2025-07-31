@@ -181,7 +181,7 @@ class MatrixConfig:
 * [Puzzle Patterns](docs/puzzle-patterns.md) - Puzzle implementation guide
 * [Build & Export Guide](dist/build_guide.md) - Distribution instructions
 * [Full Game Summary](app/STORE_PAGE.md) - Marketing materials
-* [AI Usage and Compliance](docs/AI_COMPLIANCE) - Development transparency
+* [AI Usage and Compliance](docs/ai-compliance) - Development transparency
 
 ---
 

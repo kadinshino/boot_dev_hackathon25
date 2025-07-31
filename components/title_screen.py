@@ -11,7 +11,7 @@ import math
 from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 
-from utils.config import (
+from utils.game_config import (
     TitleScreenConfig,
     Colors,
     MatrixConfig,

@@ -3,7 +3,7 @@ import asyncio
 import platform
 from typing import Optional
 
-from utils.config import (
+from utils.game_config import (
     SCREEN_WIDTH, 
     SCREEN_HEIGHT, 
     WINDOW_TITLE, 
