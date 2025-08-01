@@ -71,28 +71,43 @@ python main.py
 
 ## 🎯 How to Play
 
+### Boot Commands (Title Screen)
+
+| Command      | Description                                    |
+| ------------ | ---------------------------------------------- |
+| `boot.dev`   | Boot with full sequence → auto-start game     |
+| `boot.game`  | Quick boot → skip directly to game            |
+| `boot.debug` | Debug mode → access room jumping & dev tools  |
+
 ### Pre-Game Terminal (Matrix View)
 
 | Command    | Description                   |
 | ---------- | ----------------------------- |
-| `boot.dev` | Boots into the main game      |
 | `help`     | Show terminal commands        |
-| `start`    | Begin game (expands terminal) |
 | `status`   | View current system info      |
 | `matrix`   | Display Matrix data           |
 | `clear`    | Clear terminal screen         |
+| `exit`     | Terminate connection          |
 
 ### In-Game Commands
 
-| Command             | Description                |
-| ------------------- | -------------------------- |
-| `help`              | Show room-specific actions |
-| `look` / `scan`     | Examine surroundings       |
-| `inventory` / `i`   | Check held items           |
-| `status`            | Show game progress         |
-| `stop` / `minimize` | Return to matrix terminal  |
+| Command             | Description                         |
+| ------------------- | ----------------------------------- |
+| `help`              | Show room-specific actions          |
+| `look` / `scan`     | Examine surroundings                |
+| `inventory` / `i`   | Check held items                    |
+| `status`            | Show game progress                  |
+| `restart`           | Show restart options                |
+| `restart room`      | Reset current room only             |
+| `restart game`      | Reset entire game (requires confirm)|
+| `stop` / `minimize` | Return to matrix terminal           |
 
+### Debug Commands (boot.debug only)
 
+| Command                    | Description                    |
+| -------------------------- | ------------------------------ |
+| `boot.debug list`          | List all available rooms       |
+| `boot.debug jump <room>`   | Jump directly to specific room |
 ---
 
 ## 🏗️ Project Structure

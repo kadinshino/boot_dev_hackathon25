@@ -146,8 +146,16 @@ class BasiliskProtocol:
                     ])
                     # Set a flag so terminal knows we're in debug mode
                     self.terminal.debug_mode_active = True
+                else:
+                    # NORMAL BOOT: Auto-start the game!
+                    self._auto_start_game()
         else:
             self.terminal.update()
+    
+    def _auto_start_game(self) -> None:
+        """Automatically start the game after boot sequence."""
+        # This mimics what happens when user types 'start'
+        self.terminal._handle_start("start")
 
     def draw(self) -> None:
         """Render all game components."""

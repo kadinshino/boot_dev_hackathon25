@@ -41,6 +41,7 @@ class TitleScreenState:
     boot_sequence_index: int = 0
     boot_sequence_timer: int = 0
     debug_mode_requested: bool = False
+    quick_boot_requested: bool = False  # NEW: Skip boot sequence
     boot_lines: List[str] = field(default_factory=list)  # This must come last
 
 class TitleScreen:
@@ -76,6 +77,10 @@ class TitleScreen:
         Returns:
             True if the boot sequence is complete and game should start
         """
+        # Quick boot skips everything
+        if self.state.quick_boot_requested:
+            return True
+            
         if self.state.boot_sequence_active:
             return self._update_boot_sequence()
         else:
@@ -168,6 +173,10 @@ class TitleScreen:
             # Skip boot sequence and go straight to terminal for debug mode
             self.state.debug_mode_requested = True
             return True  # Immediately transition to terminal
+        elif command == "boot.game":
+            # NEW: Skip boot sequence and go straight to game
+            self.state.quick_boot_requested = True
+            return True  # Immediately transition to game
         
         # Clear input if wrong command
         self.state.input_text = ""
@@ -302,7 +311,7 @@ class TitleScreen:
         
         # Draw hint if input is empty
         if not self.state.input_text:
-            hint_text = "Type 'boot.dev' to begin..."
+            hint_text = "boot.dev | boot.game | boot.debug"
             hint_surface = font.render(hint_text, True, Colors.DARK_ICE_BLUE)
             hint_surface.set_alpha(100)
             hint_x = width - hint_surface.get_width() - 30
