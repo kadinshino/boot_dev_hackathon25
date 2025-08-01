@@ -12,7 +12,7 @@ from typing import Dict, Any, List, Optional, Tuple, Union
 # =============================================================================
 
 ROOMS_DIR = "rooms"
-STARTING_ROOM = "boot"
+STARTING_ROOM = "boot_entry"
 DEFAULT_HEALTH = 100
 DEFAULT_SCORE = 0
 
