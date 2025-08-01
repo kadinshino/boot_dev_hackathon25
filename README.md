@@ -42,8 +42,8 @@ Both lead to the final decision: Will you contain it… or become it?
 
 ## 🖼️ Screenshots
 
-![Terminal Gameplay](assets/screenshot_01.png)
-![Puzzle Example](assets/screenshot_02.png)
+![Terminal Gameplay](developer_tools/store_assets/screenshot_01.png)
+![Puzzle Example](developer_tools/store_assets/screenshot_02.png)
 
 ---
 
