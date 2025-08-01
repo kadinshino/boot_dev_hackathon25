@@ -118,36 +118,35 @@ The codebase is organized for clarity and modularity:
 ├── main.py                   # Game entry point
 ├── LICENSE.md                # Project license
 ├── README.md                 # Project overview and setup
-|
+│
 ├── components/               # UI elements (Pygame)
 │   ├── data_rain_effect.py   # Code rain visuals
 │   ├── terminal.py           # Terminal UI logic
 │   └── title_screen.py       # Intro/title screen
-|
+│
 ├── docs/                     # Dev documentation
 │   ├── ai-compliance.md      # AI usage statement
 │   ├── architecture.md       # System design guide
 │   ├── puzzle-patterns.md    # Puzzle examples
 │   └── room-development.md   # Room creation guide
-|
+│
 ├── resources/                # Game engine and core systems
 │   └── game_engine.py        # Main game manager
-|
+│
 ├── rooms/                    # Game content (rooms)
+│   ├── rm_boot_entry.py      # Protocol entry room
+│   │
 │   ├── beacons_oop/          # Beacon path (OOP)
 │   │   └── rm_beacon_1.
 │   └── whispers_dict/        # Whisper path (dict)
-│   |   └── rm_whisper_1.py
-|   |
+│   │   └── rm_whisper_1.py
+│   │
 │   ├── customs_args/         # Custom demo entries
 │   │   ├── rm_custom_entry.py
 │   │   ├── rm_template_dict_demo.py
 │   │   └── rm_template_oop_demo.py
-|   |
-│   ├── rm_boot_entry.py      # Protocol entry room
-|
+│   
 └── utils/                    # Shared tools/utilities
-    ├── .gitignore
     ├── file_cleanup.py       # Clean-up scripts
     ├── game_config.py        # Settings & tuning
     ├── room_utils.py         # Room helpers
