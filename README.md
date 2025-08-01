@@ -140,11 +140,10 @@ The codebase is organized for clarity and modularity:
 │   │   └── rm_beacon_1.
 │   └── whispers_dict/        # Whisper path (dict)
 │   │   └── rm_whisper_1.py
-│   │
-│   ├── customs_args/         # Custom demo entries
-│   │   ├── rm_custom_entry.py
-│   │   ├── rm_template_dict_demo.py
-│   │   └── rm_template_oop_demo.py
+│   └── customs_args/         # Custom demo entries
+│       ├── rm_custom_entry.py
+│       ├── rm_template_dict_demo.py
+│       └── rm_template_oop_demo.py
 │   
 └── utils/                    # Shared tools/utilities
     ├── file_cleanup.py       # Clean-up scripts
