@@ -21,10 +21,6 @@ goto search_root
 :root_found
 set MAIN_SCRIPT=%ROOT_DIR%\main.py
 set ASSETS_FOLDER=%ROOT_DIR%\assets
-
-
-set MAIN_SCRIPT=%ROOT_DIR%\main.py
-set ASSETS_FOLDER=%ROOT_DIR%\assets
 set OUTPUT_NAME=BASILISK_PROTOCOL
 
 echo.
