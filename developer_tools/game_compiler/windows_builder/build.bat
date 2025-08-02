@@ -1,8 +1,28 @@
 @echo off
 setlocal
 
-REM === CONFIGURATION ===
-set ROOT_DIR=..
+
+:: === Dynamically find project root by looking for main.py ===
+set ROOT_DIR=%CD%
+:search_root
+if exist "%ROOT_DIR%\main.py" (
+    echo [INFO] Project root found at: %ROOT_DIR%
+    goto :root_found
+)
+cd ..
+set ROOT_DIR=%CD%
+if "%ROOT_DIR%"=="%SystemDrive%\" (
+    echo [ERROR] Could not find main.py. Make sure the script is within the project tree.
+    pause
+    exit /b 1
+)
+goto search_root
+
+:root_found
+set MAIN_SCRIPT=%ROOT_DIR%\main.py
+set ASSETS_FOLDER=%ROOT_DIR%\assets
+
+
 set MAIN_SCRIPT=%ROOT_DIR%\main.py
 set ASSETS_FOLDER=%ROOT_DIR%\assets
 set OUTPUT_NAME=BASILISK_PROTOCOL
